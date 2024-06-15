@@ -1,16 +1,26 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Box, Button, Container, TextField, Typography } from '@mui/material';
+import { Box, Button, Container, TextField, Typography, MenuItem } from '@mui/material';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
+
+const languages = [
+    { code: 'en', name: 'English' },
+    { code: 'es', name: 'Spanish' },
+    { code: 'fr', name: 'French' },
+    { code: 'de', name: 'German' },
+    { code: 'id', name: 'Indonesian' },
+    // Add more languages as needed
+];
 
 const SubmitTranslationPage = () => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [file, setFile] = useState<File | null>(null);
+    const [sourceLanguage, setSourceLanguage] = useState('');
+    const [targetLanguage, setTargetLanguage] = useState('');
     const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
     const router = useRouter();
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,10 +32,9 @@ const SubmitTranslationPage = () => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         setError('');
-        setSuccess('');
 
-        if (!file) {
-            setError('Please upload a document.');
+        if (!title || !description || !file || !sourceLanguage || !targetLanguage) {
+            setError('Please fill in all fields and upload a file.');
             return;
         }
 
@@ -33,26 +42,23 @@ const SubmitTranslationPage = () => {
         formData.append('title', title);
         formData.append('description', description);
         formData.append('document', file);
+        formData.append('sourceLanguage', sourceLanguage);
+        formData.append('targetLanguage', targetLanguage);
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.post('/api/submit-translation', formData, {
+            const response = await axios.post('http://127.0.0.1:3001/api/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
             });
 
             if (response.status === 200) {
-                setSuccess('Translation request submitted successfully.');
-                setTitle('');
-                setDescription('');
-                setFile(null);
-                router.push('/');
+                // Redirect to a confirmation page or dashboard
+                router.push('/dashboard');
             }
         } catch (error) {
-            setError('An error occurred while submitting the translation request.');
-            console.error(error);
+            setError('Failed to submit the translation request. Please try again.');
         }
     };
 
@@ -95,32 +101,53 @@ const SubmitTranslationPage = () => {
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                     />
-                    <Button
-                        variant="contained"
-                        component="label"
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
                         fullWidth
-                        sx={{ mt: 2, mb: 2 }}
+                        select
+                        label="Source Language"
+                        value={sourceLanguage}
+                        onChange={(e) => setSourceLanguage(e.target.value)}
                     >
-                        Upload Document
-                        <input
-                            type="file"
-                            hidden
-                            onChange={handleFileChange}
-                        />
-                    </Button>
-                    {file && (
-                        <Typography variant="body2" color="textSecondary">
-                            {file.name}
-                        </Typography>
-                    )}
+                        {languages.map((lang) => (
+                            <MenuItem key={lang.code} value={lang.code}>
+                                {lang.name}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        select
+                        label="Target Language"
+                        value={targetLanguage}
+                        onChange={(e) => setTargetLanguage(e.target.value)}
+                    >
+                        {languages.map((lang) => (
+                            <MenuItem key={lang.code} value={lang.code}>
+                                {lang.name}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <input
+                        accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        style={{ display: 'none' }}
+                        id="document"
+                        type="file"
+                        onChange={handleFileChange}
+                    />
+                    <label htmlFor="document">
+                        <Button variant="outlined" component="span" fullWidth sx={{ mt: 2 }}>
+                            {file ? file.name : 'Upload Document'}
+                        </Button>
+                    </label>
                     {error && (
                         <Typography color="error" variant="body2" align="center">
                             {error}
-                        </Typography>
-                    )}
-                    {success && (
-                        <Typography color="primary" variant="body2" align="center">
-                            {success}
                         </Typography>
                     )}
                     <Button
