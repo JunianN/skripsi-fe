@@ -14,12 +14,15 @@ const languages = [
     // Add more languages as needed
 ];
 
+const pricePerPage = 100000; // Price per page
+
 const SubmitTranslationPage = () => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [file, setFile] = useState<File | null>(null);
     const [sourceLanguage, setSourceLanguage] = useState('');
     const [targetLanguage, setTargetLanguage] = useState('');
+    const [numberOfPages, setNumberOfPages] = useState(0);
     const [error, setError] = useState('');
     const router = useRouter();
 
@@ -33,7 +36,7 @@ const SubmitTranslationPage = () => {
         event.preventDefault();
         setError('');
 
-        if (!title || !description || !file || !sourceLanguage || !targetLanguage) {
+        if (!title || !description || !file || !sourceLanguage || !targetLanguage || numberOfPages <= 0) {
             setError('Please fill in all fields and upload a file.');
             return;
         }
@@ -44,6 +47,7 @@ const SubmitTranslationPage = () => {
         formData.append('document', file);
         formData.append('sourceLanguage', sourceLanguage);
         formData.append('targetLanguage', targetLanguage);
+        formData.append('numberOfPages', numberOfPages.toString());
 
         try {
             const response = await axios.post('http://127.0.0.1:3001/api/upload', formData, {
@@ -54,13 +58,15 @@ const SubmitTranslationPage = () => {
             });
 
             if (response.status === 200) {
-                // Redirect to a confirmation page or dashboard
+                // Redirect to dashboard
                 router.push('/dashboard');
             }
         } catch (error) {
             setError('Failed to submit the translation request. Please try again.');
         }
     };
+
+    const estimatedPrice = numberOfPages * pricePerPage;
 
     return (
         <Container component="main" maxWidth="sm">
@@ -133,6 +139,21 @@ const SubmitTranslationPage = () => {
                             </MenuItem>
                         ))}
                     </TextField>
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        type="number"
+                        id="numberOfPages"
+                        label="Number of Pages"
+                        name="numberOfPages"
+                        value={numberOfPages}
+                        onChange={(e) => setNumberOfPages(parseInt(e.target.value))}
+                    />
+                    <Typography variant="body1" sx={{ mt: 2 }}>
+                        Estimated Price: Rp{estimatedPrice}
+                    </Typography>
                     <input
                         accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                         style={{ display: 'none' }}
