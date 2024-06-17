@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, Button, Container, TextField, Typography, MenuItem } from '@mui/material';
+import { Box, Button, Container, TextField, Typography, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
@@ -24,6 +24,7 @@ const SubmitTranslationPage = () => {
     const [targetLanguage, setTargetLanguage] = useState('');
     const [numberOfPages, setNumberOfPages] = useState(0);
     const [error, setError] = useState('');
+    const [open, setOpen] = useState(false);
     const router = useRouter();
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,6 +36,7 @@ const SubmitTranslationPage = () => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         setError('');
+        setOpen(true);
 
         if (!title || !description || !file || !sourceLanguage || !targetLanguage || numberOfPages <= 0) {
             setError('Please fill in all fields and upload a file.');
@@ -58,8 +60,8 @@ const SubmitTranslationPage = () => {
             });
 
             if (response.status === 200) {
-                // Redirect to dashboard
-                router.push('/dashboard');
+                /// Open the success modal
+                setOpen(true);
             }
         } catch (error) {
             setError('Failed to submit the translation request. Please try again.');
@@ -67,6 +69,11 @@ const SubmitTranslationPage = () => {
     };
 
     const estimatedPrice = numberOfPages * pricePerPage;
+
+    const handleClose = () => {
+        setOpen(false);
+        router.push('/documents');
+    };
 
     return (
         <Container component="main" maxWidth="sm">
@@ -180,6 +187,19 @@ const SubmitTranslationPage = () => {
                         Submit
                     </Button>
                 </Box>
+                <Dialog open={open} onClose={handleClose}>
+                    <DialogTitle>Success</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Your document has been submitted successfully.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} color="primary" autoFocus>
+                            Go to Document List
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Box>
         </Container>
     );
