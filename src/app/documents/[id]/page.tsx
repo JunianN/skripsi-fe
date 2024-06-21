@@ -3,18 +3,20 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
-import { Box, Button, Container, Typography, Card, CardContent, TextField, Paper } from '@mui/material';
+import { Box, Button, Container, Typography, Card, CardContent, TextField, Paper, Stepper, Step, StepLabel, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import axios from 'axios';
+
+const statuses = ['Pending', 'Translating', 'Completed'];
+const accountNumber = '1234567890'; // account number
+const pricePerPage = 10; // price per page
 
 const DocumentDetailsPage = () => {
     const { id } = useParams();
-    const [document, setDocument] = useState(null);
-    console.log("🚀 ~ DocumentDetailsPage ~ document:", document)
+    const [file, setDocument] = useState(null);
     const [discussions, setDiscussions] = useState([]);
-    console.log("🚀 ~ DocumentDetailsPage ~ discussions:", discussions)
     const [newMessage, setNewMessage] = useState('');
-    console.log("🚀 ~ DocumentDetailsPage ~ newMessage:", newMessage)
     const [error, setError] = useState('');
+    const [open, setOpen] = useState(false); // State to handle modal visibility
     const router = useRouter();
 
     useEffect(() => {
@@ -78,7 +80,39 @@ const DocumentDetailsPage = () => {
         }
     };
 
-    if (!document) {
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleDownload = async () => {
+        try {
+            const response = await axios.get(`http://127.0.0.1:3001/api/documents/${id}/download`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+                responseType: 'blob',
+            });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'translated_document.pdf'); // Specify the filename
+            document.body.appendChild(link);
+            link.click();
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(error.response.data.error);
+            } else {
+                setError('An unexpected error occurred');
+            }
+        }
+    };
+
+    if (!file) {
         return (
             <Container maxWidth="md">
                 <Box sx={{ mt: 4 }}>
@@ -96,6 +130,12 @@ const DocumentDetailsPage = () => {
         );
     }
 
+    var activeStep = statuses.indexOf(file.Status);
+    if (file.Status === "Completed") {
+        activeStep = 3
+    }
+    const totalPrice = file.NumberOfPages * pricePerPage;
+
     return (
         <Container maxWidth="md">
             <Box sx={{ mt: 4 }}>
@@ -110,22 +150,22 @@ const DocumentDetailsPage = () => {
                 <Card>
                     <CardContent>
                         <Typography variant="h5" component="div">
-                            {document.Title}
+                            {file.Title}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
-                            Description: {document.Description}
+                            Description: {file.Description}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
-                            Source Language: {document.SourceLanguage}
+                            Source Language: {file.SourceLanguage}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
-                            Target Language: {document.TargetLanguage}
+                            Target Language: {file.TargetLanguage}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
-                            Number of Pages: {document.NumberOfPages}
+                            Number of Pages: {file.NumberOfPages}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
-                            Status: {document.Status}
+                            Status: {file.Status}
                         </Typography>
                         <Button
                             variant="outlined"
@@ -135,8 +175,41 @@ const DocumentDetailsPage = () => {
                         >
                             Back to Document List
                         </Button>
+                        {file.Status === 'Completed' && (
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                onClick={handleClickOpen}
+                                sx={{ mt: 2, ml: 2 }}
+                            >
+                                View Payment Details
+                            </Button>
+                        )}
+                        {file.Status === 'Completed' && file.PaymentConfirmed && (
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={handleDownload}
+                                    sx={{ mt: 2, ml: 2 }}
+                                >
+                                    Download Translated Document
+                                </Button>
+                        )}
                     </CardContent>
                 </Card>
+
+                <Box sx={{ mt: 4 }}>
+                    <Typography variant="h5" gutterBottom>
+                        Status Progress
+                    </Typography>
+                    <Stepper activeStep={activeStep}>
+                        {statuses.map((status, index) => (
+                            <Step key={index}>
+                                <StepLabel>{status}</StepLabel>
+                            </Step>
+                        ))}
+                    </Stepper>
+                </Box>
 
                 <Box sx={{ mt: 4 }}>
                     <Typography variant="h5" gutterBottom>
@@ -163,6 +236,26 @@ const DocumentDetailsPage = () => {
                         </Button>
                     </Box>
                 </Box>
+
+                <Dialog open={open} onClose={handleClose}>
+                    <DialogTitle>Payment Details</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Please transfer the amount of ${totalPrice} to the following account number:
+                        </DialogContentText>
+                        <Typography variant="h6" sx={{ mt: 2 }}>
+                            Account Number: {accountNumber}
+                        </Typography>
+                        <DialogContentText sx={{ mt: 2 }}>
+                            After completing the payment, please confirm the payment through the provided means.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} color="primary">
+                            Close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Box>
         </Container>
     );
