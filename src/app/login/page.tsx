@@ -31,8 +31,12 @@ const LoginPage = () => {
             // Save the token to localStorage
             localStorage.setItem('token', token);
 
-            // Redirect to the landing page
-            router.push('/');
+            const userRole = response.data.userRole; // Assuming the backend returns the userRole
+            if (userRole === 'admin') {
+                router.push('/admin/documents');
+            } else {
+                router.push('/');
+            }
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 setError(error.response.data.error);
