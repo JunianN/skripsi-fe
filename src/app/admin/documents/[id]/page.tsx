@@ -1,19 +1,22 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useParams } from 'next/navigation';
-import { Box, Button, Container, Typography, Card, CardContent, TextField, Paper, Stepper, Step, StepLabel } from '@mui/material';
+import { useRouter, useParams } from 'next/navigation';
+import { Box, Button, Container, Typography, Card, CardContent, TextField, Paper, Stepper, Step, StepLabel, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import axios from 'axios';
 
 const statuses = ['Pending', 'In Progress', 'Completed'];
 
 const AdminDocumentDetailsPage = () => {
     const { id } = useParams();
-    const [file, setDocument] = useState(null);
+    const [file, setFile] = useState(null);
+    console.log("🚀 ~ AdminDocumentDetailsPage ~ file:", file)
     const [discussions, setDiscussions] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [error, setError] = useState('');
+    const [translators, setTranslators] = useState([]);
+    console.log("🚀 ~ AdminDocumentDetailsPage ~ translators:", translators)
+    const [selectedTranslator, setSelectedTranslator] = useState('');
     const router = useRouter();
 
     useEffect(() => {
@@ -24,7 +27,7 @@ const AdminDocumentDetailsPage = () => {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     },
                 });
-                setDocument(response.data);
+                setFile(response.data);
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
                     setError(`Error fetching document: ${error.response.data.error}`);
@@ -51,8 +54,26 @@ const AdminDocumentDetailsPage = () => {
             }
         };
 
+        const fetchTranslators = async () => {
+            try {
+                const response = await axios.get('http://127.0.0.1:3001/api/admin/translators', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+                setTranslators(response.data);
+            } catch (error) {
+                if (axios.isAxiosError(error) && error.response) {
+                    setError(`Error fetching translators: ${error.response.data.error}`);
+                } else {
+                    setError('An unexpected error occurred while fetching translators');
+                }
+            }
+        };
+
         fetchDocument();
         fetchDiscussions();
+        fetchTranslators();
     }, [id]);
 
     const handlePostMessage = async () => {
@@ -102,6 +123,63 @@ const AdminDocumentDetailsPage = () => {
             }
         }
     };
+
+    const handleApprove = async () => {
+        try {
+            await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/approve`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+            setFile({ ...file, ApprovalStatus: 'Approved' });
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Error approving document: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred during the approval');
+            }
+        }
+    };
+
+    const handleReject = async () => {
+        try {
+            await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/reject`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+            setFile({ ...file, ApprovalStatus: 'Rejected' });
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Error rejecting document: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred during the rejection');
+            }
+        }
+    };
+
+    const handleAssign = async () => {
+        if (!selectedTranslator) {
+            setError('Please select a translator');
+            return;
+        }
+
+        try {
+            await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/assign`, { translator_id: selectedTranslator }, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+            setFile({ ...file, Status: 'In Progress', TranslatorID: selectedTranslator });
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Error assigning document: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred during the assignment');
+            }
+        }
+    };
+
 
     if (!file) {
         return (
@@ -170,6 +248,52 @@ const AdminDocumentDetailsPage = () => {
                         >
                             Download Submitted Document
                         </Button>
+                        {file.ApprovalStatus === 'Pending' && (
+                            <>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={handleApprove}
+                                    sx={{ mt: 2, ml: 2 }}
+                                >
+                                    Approve
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    onClick={handleReject}
+                                    sx={{ mt: 2, ml: 2 }}
+                                >
+                                    Reject
+                                </Button>
+                            </>
+                        )}
+                        {file.ApprovalStatus === 'Approved' && file.Status === 'Pending' && (
+                            <FormControl fullWidth sx={{ mt: 2 }}>
+                                <InputLabel id="translator-select-label">Select Translator</InputLabel>
+                                <Select
+                                    labelId="translator-select-label"
+                                    id="translator-select"
+                                    value={selectedTranslator}
+                                    label="Select Translator"
+                                    onChange={(e) => setSelectedTranslator(e.target.value)}
+                                >
+                                    {translators.map((translator) => (
+                                        <MenuItem key={translator.ID} value={translator.ID}>
+                                            {translator.Username}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={handleAssign}
+                                    sx={{ mt: 2 }}
+                                >
+                                    Assign to Translator
+                                </Button>
+                            </FormControl>
+                        )}
                     </CardContent>
                 </Card>
 
