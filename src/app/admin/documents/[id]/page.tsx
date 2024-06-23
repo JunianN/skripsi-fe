@@ -124,6 +124,66 @@ const AdminDocumentDetailsPage = () => {
         }
     };
 
+    const handleDownloadTranslated = async () => {
+        try {
+            const response = await axios.get(`http://127.0.0.1:3001/api/admin/documents/${id}/translated/download`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+                responseType: 'blob',
+            });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'translated_document.pdf'); // Specify the filename
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Download error: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred during the download');
+            }
+        }
+    };
+
+    const handleApproveTranslated = async () => {
+        try {
+            await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/translated/approve`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+            setFile({ ...file, TranslatedApprovalStatus: 'Approved', Status: 'Completed' });
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Error approving translated document: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred during the approval');
+            }
+        }
+    };
+
+    const handleRejectTranslated = async () => {
+        try {
+            await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/translated/reject`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+            setFile({ ...file, TranslatedApprovalStatus: 'Rejected' });
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Error rejecting translated document: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred during the rejection');
+            }
+        }
+    };
+
     const handleApprove = async () => {
         try {
             await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/approve`, {}, {
@@ -248,6 +308,38 @@ const AdminDocumentDetailsPage = () => {
                         >
                             Download Submitted Document
                         </Button>
+                        {file.TranslatedFilePath && (
+                            <>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={handleDownloadTranslated}
+                                    sx={{ mt: 2, ml: 2 }}
+                                >
+                                    Download Translated Document
+                                </Button>
+                                {file.TranslatedApprovalStatus === 'Pending' && (
+                                    <>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={handleApproveTranslated}
+                                            sx={{ mt: 2, ml: 2 }}
+                                        >
+                                            Approve Translated Document
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            color="error"
+                                            onClick={handleRejectTranslated}
+                                            sx={{ mt: 2, ml: 2 }}
+                                        >
+                                            Reject Translated Document
+                                        </Button>
+                                    </>
+                                )}
+                            </>
+                        )}
                         {file.ApprovalStatus === 'Pending' && (
                             <>
                                 <Button
