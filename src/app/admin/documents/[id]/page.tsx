@@ -15,7 +15,6 @@ const AdminDocumentDetailsPage = () => {
     const [newMessage, setNewMessage] = useState('');
     const [error, setError] = useState('');
     const [translators, setTranslators] = useState([]);
-    console.log("🚀 ~ AdminDocumentDetailsPage ~ translators:", translators)
     const [selectedTranslator, setSelectedTranslator] = useState('');
     const router = useRouter();
 
@@ -240,6 +239,32 @@ const AdminDocumentDetailsPage = () => {
         }
     };
 
+    const handleDownloadPaymentReceipt = async () => {
+        try {
+            const response = await axios.get(`http://127.0.0.1:3001/api/admin/documents/${id}/payment-receipt`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+                responseType: 'blob',
+            });
+            
+            const filename = response.headers['content-disposition'].split('filename=')[1];
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            console.log(error)
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Download error: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred during the download');
+            }
+        }
+    };
 
     if (!file) {
         return (
@@ -386,6 +411,14 @@ const AdminDocumentDetailsPage = () => {
                                 </Button>
                             </FormControl>
                         )}
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={handleDownloadPaymentReceipt}
+                            sx={{ mt: 2, ml: 2 }}
+                        >
+                            Download Payment Receipt
+                        </Button>
                     </CardContent>
                 </Card>
 
