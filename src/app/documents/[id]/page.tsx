@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import { Box, Button, Container, Typography, Card, CardContent, TextField, Paper, Stepper, Step, StepLabel, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import axios from 'axios';
+import PaymentDetailsModal from '@/components/PaymentDetailsModal';
 
 const statuses = ['Pending', 'Translating', 'Completed'];
-const accountNumber = '1234567890'; // account number
-const pricePerPage = 10; // price per page
+const pricePerPage = 100000; // price per page
 
 const DocumentDetailsPage = () => {
     const { id } = useParams();
@@ -16,7 +16,8 @@ const DocumentDetailsPage = () => {
     const [discussions, setDiscussions] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [error, setError] = useState('');
-    const [open, setOpen] = useState(false); // State to handle modal visibility
+    const [modalOpen, setModalOpen] = useState(false);
+
     const router = useRouter();
 
     useEffect(() => {
@@ -80,14 +81,6 @@ const DocumentDetailsPage = () => {
         }
     };
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
     const handleDownload = async () => {
         try {
             const response = await axios.get(`http://127.0.0.1:3001/api/documents/${id}/download`, {
@@ -111,6 +104,9 @@ const DocumentDetailsPage = () => {
             }
         }
     };
+
+    const handleOpenModal = () => setModalOpen(true);
+    const handleCloseModal = () => setModalOpen(false);
 
     if (!file) {
         return (
@@ -179,21 +175,22 @@ const DocumentDetailsPage = () => {
                             <Button
                                 variant="contained"
                                 color="secondary"
-                                onClick={handleClickOpen}
+                                onClick={handleOpenModal}
                                 sx={{ mt: 2, ml: 2 }}
                             >
                                 View Payment Details
                             </Button>
+
                         )}
                         {file.Status === 'Completed' && file.PaymentConfirmed && (
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={handleDownload}
-                                    sx={{ mt: 2, ml: 2 }}
-                                >
-                                    Download Translated Document
-                                </Button>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleDownload}
+                                sx={{ mt: 2, ml: 2 }}
+                            >
+                                Download Translated Document
+                            </Button>
                         )}
                     </CardContent>
                 </Card>
@@ -236,27 +233,8 @@ const DocumentDetailsPage = () => {
                         </Button>
                     </Box>
                 </Box>
-
-                <Dialog open={open} onClose={handleClose}>
-                    <DialogTitle>Payment Details</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            Please transfer the amount of ${totalPrice} to the following account number:
-                        </DialogContentText>
-                        <Typography variant="h6" sx={{ mt: 2 }}>
-                            Account Number: {accountNumber}
-                        </Typography>
-                        <DialogContentText sx={{ mt: 2 }}>
-                            After completing the payment, please confirm the payment through the provided means.
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose} color="primary">
-                            Close
-                        </Button>
-                    </DialogActions>
-                </Dialog>
             </Box>
+            <PaymentDetailsModal open={modalOpen} handleClose={handleCloseModal} documentId={id} totalPrice={totalPrice} />
         </Container>
     );
 };
