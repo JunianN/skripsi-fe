@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { Box, Button, Container, Typography, Card, CardContent, TextField, Paper, Stepper, Step, StepLabel, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { Box, Button, Container, Typography, Card, CardContent, TextField, Paper, Stepper, Step, StepLabel, MenuItem, Select, FormControl, InputLabel, Alert } from '@mui/material';
 import axios from 'axios';
 
 const statuses = ['Pending', 'In Progress', 'Completed'];
@@ -16,6 +16,7 @@ const AdminDocumentDetailsPage = () => {
     const [error, setError] = useState('');
     const [translators, setTranslators] = useState([]);
     const [selectedTranslator, setSelectedTranslator] = useState('');
+    const [success, setSuccess] = useState('');
     const router = useRouter();
 
     useEffect(() => {
@@ -247,7 +248,7 @@ const AdminDocumentDetailsPage = () => {
                 },
                 responseType: 'blob',
             });
-            
+
             const filename = response.headers['content-disposition'].split('filename=')[1];
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
@@ -262,6 +263,25 @@ const AdminDocumentDetailsPage = () => {
                 setError(`Download error: ${error.response.data.error}`);
             } else {
                 setError('An unexpected error occurred during the download');
+            }
+        }
+    };
+
+    const handleApprovePayment = async () => {
+        try {
+            await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/payment-approve`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+            setSuccess('Payment approved successfully');
+            setError('');
+            setFile({ ...file, PaymentConfirmed: true });
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Error approving payment: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred during the payment approval');
             }
         }
     };
@@ -292,11 +312,8 @@ const AdminDocumentDetailsPage = () => {
                 <Typography variant="h4" gutterBottom>
                     Document Details
                 </Typography>
-                {error && (
-                    <Typography color="error" variant="body2" align="center">
-                        {error}
-                    </Typography>
-                )}
+                {error && <Alert severity="error">{error}</Alert>}
+                {success && <Alert severity="success">{success}</Alert>}
                 <Card>
                     <CardContent>
                         <Typography variant="h5" component="div">
@@ -419,6 +436,16 @@ const AdminDocumentDetailsPage = () => {
                         >
                             Download Payment Receipt
                         </Button>
+                        {!file.PaymentConfirmed && (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleApprovePayment}
+                                sx={{ mt: 2, ml: 2 }}
+                            >
+                                Approve Payment
+                            </Button>
+                        )}
                     </CardContent>
                 </Card>
 
