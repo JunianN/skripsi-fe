@@ -32,10 +32,12 @@ const LoginPage = () => {
             localStorage.setItem('token', token);
 
             const userRole = response.data.userRole; // Assuming the backend returns the userRole
-            if (userRole === 'admin') {
+            if (userRole === 'translator') {
+                router.push('/translators/assigned-documents');
+            } else if (userRole === 'admin') {
                 router.push('/admin/documents');
             } else {
-                router.push('/');
+                router.push('/documents');
             }
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
