@@ -225,17 +225,19 @@ const AdminDocumentDetailsPage = () => {
         }
 
         try {
-            await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/assign`, { translator_id: selectedTranslator }, {
+            const response = await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/assign`, { translator_id: selectedTranslator }, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
             });
-            setFile({ ...file, Status: 'In Progress', TranslatorID: selectedTranslator });
+            setSuccess(response.data.message);
+            setError('');
+            setFile({ ...file, TranslatorID: selectedTranslator, TranslatorApprovalStatus: 'Pending', AssignmentTime: new Date().toISOString() });
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 setError(`Error assigning document: ${error.response.data.error}`);
             } else {
-                setError('An unexpected error occurred during the assignment');
+                setError(`An unexpected error occurred during the assignment: ${error}`);
             }
         }
     };
@@ -350,7 +352,7 @@ const AdminDocumentDetailsPage = () => {
                         >
                             Download Submitted Document
                         </Button>
-                        {file.TranslatedFilePath && (
+                        {file.TranslatedFilePath && file.Status === "In Progress" && (
                             <>
                                 <Button
                                     variant="contained"
@@ -402,7 +404,7 @@ const AdminDocumentDetailsPage = () => {
                                 </Button>
                             </>
                         )}
-                        {file.ApprovalStatus === 'Approved' && file.Status === 'Pending' && (
+                        {file.ApprovalStatus === 'Approved' && file.Status === 'Pending' && file.TranslatorApprovalStatus === '' || file.TranslatorApprovalStatus === 'Declined' && (
                             <FormControl fullWidth sx={{ mt: 2 }}>
                                 <InputLabel id="translator-select-label">Select Translator</InputLabel>
                                 <Select
@@ -428,14 +430,18 @@ const AdminDocumentDetailsPage = () => {
                                 </Button>
                             </FormControl>
                         )}
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            onClick={handleDownloadPaymentReceipt}
-                            sx={{ mt: 2, ml: 2 }}
-                        >
-                            Download Payment Receipt
-                        </Button>
+                        {
+                            file.Status === "Finished" && (
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={handleDownloadPaymentReceipt}
+                                    sx={{ mt: 2, ml: 2 }}
+                                >
+                                    Download Payment Receipt
+                                </Button>
+                            )
+                        }
                         {!file.PaymentConfirmed && (
                             <Button
                                 variant="contained"

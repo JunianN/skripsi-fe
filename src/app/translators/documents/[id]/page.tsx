@@ -9,6 +9,7 @@ const TranslatorDocumentDetailsPage = () => {
     const { id } = useParams();
     const [file, setFile] = useState(null);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const router = useRouter();
 
     useEffect(() => {
@@ -67,6 +68,44 @@ const TranslatorDocumentDetailsPage = () => {
         }
     };
 
+    const handleApproveDocument = async () => {
+        try {
+            const response = await axios.post(`http://127.0.0.1:3001/api/translator/documents/${id}/approve`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
+            setSuccess(response.data.message);
+            setError('');
+            setFile({ ...file, TranslatorApprovalStatus: 'Accepted' });
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Approval error: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred during approval');
+            }
+        }
+    };
+
+    const handleDeclineDocument = async () => {
+        try {
+            const response = await axios.post(`http://127.0.0.1:3001/api/translator/documents/${id}/decline`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
+            setSuccess(response.data.message);
+            setError('');
+            setFile({ ...file, TranslatorApprovalStatus: 'Declined' });
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Decline error: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred during decline');
+            }
+        }
+    };
+
     if (!file) {
         return (
             <Container maxWidth="md">
@@ -88,6 +127,7 @@ const TranslatorDocumentDetailsPage = () => {
                     Document Details
                 </Typography>
                 {error && <Alert severity="error">{error}</Alert>}
+                {success && <Alert severity="success">{success}</Alert>}
                 <Card>
                     <CardContent>
                         <Typography variant="h5" component="div">
@@ -121,7 +161,26 @@ const TranslatorDocumentDetailsPage = () => {
                         >
                             Download Document
                         </Button>
-                        {/* Other buttons for document actions... */}
+                        {file.TranslatorApprovalStatus == 'Pending' && (
+                            <>
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    onClick={handleApproveDocument}
+                                    sx={{ mt: 2, ml: 2 }}
+                                >
+                                    Accept
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    onClick={handleDeclineDocument}
+                                    sx={{ mt: 2, ml: 2 }}
+                                >
+                                    Decline
+                                </Button>
+                            </>
+                        )}
                     </CardContent>
                 </Card>
             </Box>
