@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { Box, Button, Container, Typography, Card, CardContent, TextField, Paper, Stepper, Step, StepLabel, MenuItem, Select, FormControl, InputLabel, Alert } from '@mui/material';
 import axios from 'axios';
 
-const statuses = ['Pending', 'In Progress', 'Completed'];
+const statuses = ['Pending', 'Translating', 'Finished'];
 
 const AdminDocumentDetailsPage = () => {
     const { id } = useParams();
@@ -157,7 +157,7 @@ const AdminDocumentDetailsPage = () => {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
             });
-            setFile({ ...file, TranslatedApprovalStatus: 'Approved', Status: 'Completed' });
+            setFile({ ...file, TranslatedApprovalStatus: 'Approved', Status: 'Finished' });
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 setError(`Error approving translated document: ${error.response.data.error}`);
@@ -352,7 +352,7 @@ const AdminDocumentDetailsPage = () => {
                         >
                             Download Submitted Document
                         </Button>
-                        {file.TranslatedFilePath && file.Status === "In Progress" && (
+                        {file.TranslatedFilePath && file.Status === "Translating" && (
                             <>
                                 <Button
                                     variant="contained"

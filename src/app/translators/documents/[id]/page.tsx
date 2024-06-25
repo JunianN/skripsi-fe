@@ -2,14 +2,16 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { Box, Button, Container, Typography, Card, CardContent, Alert } from '@mui/material';
+import { Box, Button, Container, Typography, Card, CardContent, Alert, TextField } from '@mui/material';
 import axios from 'axios';
 
 const TranslatorDocumentDetailsPage = () => {
     const { id } = useParams();
     const [file, setFile] = useState(null);
+    console.log("🚀 ~ TranslatorDocumentDetailsPage ~ file:", file)
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [translatedFile, setTranslatedFile] = useState(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -106,6 +108,40 @@ const TranslatorDocumentDetailsPage = () => {
         }
     };
 
+    const handleFileChange = (event) => {
+        setTranslatedFile(event.target.files[0]);
+    };
+
+    const handleUploadTranslatedDocument = async (event) => {
+        event.preventDefault();
+        if (!translatedFile) {
+            setError('Please select a file to upload');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('translated_document', translatedFile);
+
+        try {
+            const response = await axios.post(`http://127.0.0.1:3001/api/translator/documents/${id}/upload`, formData, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'multipart/form-data'
+                },
+            });
+            setSuccess(response.data.message);
+            setError('');
+            setFile({ ...file, TranslatedApprovalStatus: 'Pending', TranslatedFilePath: response.data.filePath });
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Upload error: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred during the upload');
+            }
+        }
+    };
+
+
     if (!file) {
         return (
             <Container maxWidth="md">
@@ -180,6 +216,32 @@ const TranslatorDocumentDetailsPage = () => {
                                     Decline
                                 </Button>
                             </>
+                        )}
+                        {(file.TranslatedApprovalStatus === '' || file.TranslatedApprovalStatus === 'Rejected') && (
+                            <form onSubmit={handleUploadTranslatedDocument} style={{ marginTop: '16px' }}>
+                                {file.TranslatedApprovalStatus === 'Rejected' && (<Alert severity="error">Rejected by Admin</Alert>)}
+                                <TextField
+                                    type="file"
+                                    onChange={handleFileChange}
+                                    fullWidth
+                                    variant="outlined"
+                                    sx={{ mt: 2 }}
+                                />
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                    sx={{ mt: 2 }}
+                                >
+                                    Upload Translated Document
+                                </Button>
+                            </form>
+                        )}
+                        {file.TranslatedApprovalStatus === 'Pending' && (
+                            <Alert severity="info">Translated document uploaded. Waiting for admin review.</Alert>
+                        )}
+                        {file.TranslatedApprovalStatus === 'Approved' && (
+                            <Alert severity="success">Translated document uploaded. Approved by Admin.</Alert>
                         )}
                     </CardContent>
                 </Card>
