@@ -104,9 +104,7 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
                 {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
                 {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
                 {receiptUploaded ? (
-                    <Typography variant="body1" sx={{ mt: 2 }}>
-                        Payment receipt has been uploaded.
-                    </Typography>
+                    <Alert severity="success" sx={{ mt: 2 }}>Payment receipt has been uploaded. Waiting for confirmation from the admin.</Alert>
                 ) : (
                     <Card sx={{ mt: 2 }}>
                         <CardContent>

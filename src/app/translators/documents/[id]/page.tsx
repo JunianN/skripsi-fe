@@ -61,7 +61,6 @@ const TranslatorDocumentDetailsPage = () => {
             link.click();
             link.remove();
         } catch (error) {
-            console.log("🚀 ~ handleDownloadDocument ~ error:", error)
             if (axios.isAxiosError(error) && error.response) {
                 setError(`Download error: ${error.response.statusText}`);
             } else {
@@ -217,7 +216,7 @@ const TranslatorDocumentDetailsPage = () => {
                                 </Button>
                             </>
                         )}
-                        {(file.TranslatedApprovalStatus === '' || file.TranslatedApprovalStatus === 'Rejected') && (
+                        {file.TranslatorApprovalStatus === 'Accepted' && (file.TranslatedApprovalStatus === '' || file.TranslatedApprovalStatus === 'Rejected') && (
                             <form onSubmit={handleUploadTranslatedDocument} style={{ marginTop: '16px' }}>
                                 {file.TranslatedApprovalStatus === 'Rejected' && (<Alert severity="error">Rejected by Admin</Alert>)}
                                 <TextField

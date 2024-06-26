@@ -12,15 +12,6 @@ const Navbar = () => {
     const { user, isLoggedIn, logout } = useAuth();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
-    // const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    useEffect(() => {
-        // Check if user is logged in
-        const token = localStorage.getItem('token');
-        if (token) {
-            // setIsLoggedIn(true);
-        }
-    }, []);
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);

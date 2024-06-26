@@ -76,28 +76,6 @@ const AdminDocumentDetailsPage = () => {
         fetchTranslators();
     }, [id]);
 
-    const handlePostMessage = async () => {
-        if (!newMessage.trim()) {
-            return;
-        }
-
-        try {
-            const response = await axios.post(`http://127.0.0.1:3001/api/documents/${id}/discussions`, { message: newMessage }, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            setDiscussions([...discussions, response.data]);
-            setNewMessage('');
-        } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                setError(`Error posting message: ${error.response.data.error}`);
-            } else {
-                setError('An unexpected error occurred while posting the message');
-            }
-        }
-    };
-
     const handleDownload = async () => {
         try {
             const response = await axios.get(`http://127.0.0.1:3001/api/admin/documents/${id}/download`, {
@@ -120,6 +98,88 @@ const AdminDocumentDetailsPage = () => {
                 setError(`Download error: ${error.response.data.error}`);
             } else {
                 setError('An unexpected error occurred during the download');
+            }
+        }
+    };
+
+    const handleApprove = async () => {
+        try {
+            const response = await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/approve`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+            setFile({ ...file, ApprovalStatus: 'Approved' });
+            setSuccess(response.data.message)
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Error approving document: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred during the approval');
+            }
+        }
+    };
+
+    const handleReject = async () => {
+        try {
+            const response = await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/reject`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+            setFile({ ...file, ApprovalStatus: 'Rejected' });
+            setSuccess(response.data.message)
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Error rejecting document: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred during the rejection');
+            }
+        }
+    };
+
+    const handleAssign = async () => {
+        if (!selectedTranslator) {
+            setError('Please select a translator');
+            return;
+        }
+
+        try {
+            const response = await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/assign`, { translator_id: selectedTranslator }, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                }
+            });
+            setSuccess(response.data.message);
+            setError('');
+            setFile({ ...file, TranslatorID: selectedTranslator, TranslatorApprovalStatus: 'Pending', AssignmentTime: new Date().toISOString() });
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Error assigning document: ${error.response.data.error}`);
+            } else {
+                setError(`An unexpected error occurred during the assignment: ${error}`);
+            }
+        }
+    };
+
+    const handlePostMessage = async () => {
+        if (!newMessage.trim()) {
+            return;
+        }
+
+        try {
+            const response = await axios.post(`http://127.0.0.1:3001/api/documents/${id}/discussions`, { message: newMessage }, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
+            setDiscussions([...discussions, response.data]);
+            setNewMessage('');
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Error posting message: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred while posting the message');
             }
         }
     };
@@ -180,64 +240,6 @@ const AdminDocumentDetailsPage = () => {
                 setError(`Error rejecting translated document: ${error.response.data.error}`);
             } else {
                 setError('An unexpected error occurred during the rejection');
-            }
-        }
-    };
-
-    const handleApprove = async () => {
-        try {
-            await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/approve`, {}, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                }
-            });
-            setFile({ ...file, ApprovalStatus: 'Approved' });
-        } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                setError(`Error approving document: ${error.response.data.error}`);
-            } else {
-                setError('An unexpected error occurred during the approval');
-            }
-        }
-    };
-
-    const handleReject = async () => {
-        try {
-            await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/reject`, {}, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                }
-            });
-            setFile({ ...file, ApprovalStatus: 'Rejected' });
-        } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                setError(`Error rejecting document: ${error.response.data.error}`);
-            } else {
-                setError('An unexpected error occurred during the rejection');
-            }
-        }
-    };
-
-    const handleAssign = async () => {
-        if (!selectedTranslator) {
-            setError('Please select a translator');
-            return;
-        }
-
-        try {
-            const response = await axios.post(`http://127.0.0.1:3001/api/admin/documents/${id}/assign`, { translator_id: selectedTranslator }, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                }
-            });
-            setSuccess(response.data.message);
-            setError('');
-            setFile({ ...file, TranslatorID: selectedTranslator, TranslatorApprovalStatus: 'Pending', AssignmentTime: new Date().toISOString() });
-        } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                setError(`Error assigning document: ${error.response.data.error}`);
-            } else {
-                setError(`An unexpected error occurred during the assignment: ${error}`);
             }
         }
     };
@@ -352,6 +354,55 @@ const AdminDocumentDetailsPage = () => {
                         >
                             Download Submitted Document
                         </Button>
+                        {file.ApprovalStatus === '' && (
+                            <>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={handleApprove}
+                                    sx={{ mt: 2, ml: 2 }}
+                                >
+                                    Approve
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    onClick={handleReject}
+                                    sx={{ mt: 2, ml: 2 }}
+                                >
+                                    Reject
+                                </Button>
+                            </>
+                        )}
+                        {(file.ApprovalStatus === 'Approved' && file.Status === 'Pending' && file.TranslatorApprovalStatus === '' || file.TranslatorApprovalStatus === 'Declined') && (
+                            <FormControl fullWidth sx={{ mt: 2 }}>
+                                <InputLabel id="translator-select-label">Select Translator</InputLabel>
+                                <Select
+                                    labelId="translator-select-label"
+                                    id="translator-select"
+                                    value={selectedTranslator}
+                                    label="Select Translator"
+                                    onChange={(e) => setSelectedTranslator(e.target.value)}
+                                >
+                                    {translators.map((translator) => (
+                                        <MenuItem key={translator.ID} value={translator.ID}>
+                                            {translator.Username}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={handleAssign}
+                                    sx={{ mt: 2 }}
+                                >
+                                    Assign to Translator
+                                </Button>
+                            </FormControl>
+                        )}
+                        {file.TranslatorApprovalStatus === 'Pending' && (
+                            <Alert severity="info">This document has been assigned to a translator. Waiting for the translator reponse.</Alert>
+                        )}
                         {file.TranslatedFilePath && file.Status === "Translating" && (
                             <>
                                 <Button
@@ -384,65 +435,20 @@ const AdminDocumentDetailsPage = () => {
                                 )}
                             </>
                         )}
-                        {file.ApprovalStatus === 'Pending' && (
-                            <>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={handleApprove}
-                                    sx={{ mt: 2, ml: 2 }}
-                                >
-                                    Approve
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    onClick={handleReject}
-                                    sx={{ mt: 2, ml: 2 }}
-                                >
-                                    Reject
-                                </Button>
-                            </>
+                        {file.TranslatedApprovalStatus === 'Approved' && file.PaymentReceiptFilePath === '' && (
+                            <Alert severity="info">This document has been translated. Waiting for payment from the user.</Alert>
                         )}
-                        {file.ApprovalStatus === 'Approved' && file.Status === 'Pending' && file.TranslatorApprovalStatus === '' || file.TranslatorApprovalStatus === 'Declined' && (
-                            <FormControl fullWidth sx={{ mt: 2 }}>
-                                <InputLabel id="translator-select-label">Select Translator</InputLabel>
-                                <Select
-                                    labelId="translator-select-label"
-                                    id="translator-select"
-                                    value={selectedTranslator}
-                                    label="Select Translator"
-                                    onChange={(e) => setSelectedTranslator(e.target.value)}
-                                >
-                                    {translators.map((translator) => (
-                                        <MenuItem key={translator.ID} value={translator.ID}>
-                                            {translator.Username}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={handleAssign}
-                                    sx={{ mt: 2 }}
-                                >
-                                    Assign to Translator
-                                </Button>
-                            </FormControl>
+                        {(file.Status === "Finished" && file.PaymentReceiptFilePath !== '') && (
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                onClick={handleDownloadPaymentReceipt}
+                                sx={{ mt: 2, ml: 2 }}
+                            >
+                                Download Payment Receipt
+                            </Button>
                         )}
-                        {
-                            file.Status === "Finished" && (
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    onClick={handleDownloadPaymentReceipt}
-                                    sx={{ mt: 2, ml: 2 }}
-                                >
-                                    Download Payment Receipt
-                                </Button>
-                            )
-                        }
-                        {!file.PaymentConfirmed && (
+                        {(!file.PaymentConfirmed && file.Status === "Finished" && file.PaymentReceiptFilePath !== '') && (
                             <Button
                                 variant="contained"
                                 color="primary"
@@ -451,6 +457,9 @@ const AdminDocumentDetailsPage = () => {
                             >
                                 Approve Payment
                             </Button>
+                        )}
+                        {file.PaymentConfirmed && (
+                            <Alert severity="success">Payment has been confirmed.</Alert>
                         )}
                     </CardContent>
                 </Card>

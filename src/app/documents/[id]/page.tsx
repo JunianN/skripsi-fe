@@ -7,7 +7,7 @@ import { Box, Button, Container, Typography, Card, CardContent, TextField, Paper
 import axios from 'axios';
 import PaymentDetailsModal from '@/app/components/PaymentDetailsModal';
 
-const statuses = ['Pending', 'Translating', 'Completed'];
+const statuses = ['Pending', 'Translating', 'Finished'];
 const pricePerPage = 100000; // price per page
 
 const DocumentDetailsPage = () => {
@@ -127,7 +127,7 @@ const DocumentDetailsPage = () => {
     }
 
     var activeStep = statuses.indexOf(file.Status);
-    if (file.Status === "Completed") {
+    if (file.Status === "Finished") {
         activeStep = 3
     }
     const totalPrice = file.NumberOfPages * pricePerPage;
@@ -171,7 +171,7 @@ const DocumentDetailsPage = () => {
                         >
                             Back to Document List
                         </Button>
-                        {file.Status === 'Completed' && (
+                        {file.Status === 'Finished' && !file.PaymentConfirmed && (
                             <Button
                                 variant="contained"
                                 color="secondary"
@@ -182,7 +182,7 @@ const DocumentDetailsPage = () => {
                             </Button>
 
                         )}
-                        {file.Status === 'Completed' && file.PaymentConfirmed && (
+                        {file.Status === 'Finished' && file.PaymentConfirmed && (
                             <Button
                                 variant="contained"
                                 color="primary"
@@ -197,7 +197,7 @@ const DocumentDetailsPage = () => {
 
                 <Box sx={{ mt: 4 }}>
                     <Typography variant="h5" gutterBottom>
-                        Status Progress
+                        Translation Status Progress
                     </Typography>
                     <Stepper activeStep={activeStep}>
                         {statuses.map((status, index) => (
