@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import { Box, Button, Container, Typography, Card, CardContent, TextField, Paper, Stepper, Step, StepLabel, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import axios from 'axios';
-import PaymentDetailsModal from '@/components/PaymentDetailsModal';
+import PaymentDetailsModal from '@/app/components/PaymentDetailsModal';
 
 const statuses = ['Pending', 'Translating', 'Completed'];
 const pricePerPage = 100000; // price per page

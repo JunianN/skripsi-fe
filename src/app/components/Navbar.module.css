@@ -1,0 +1,24 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navLinks {
+    display: flex;
+    gap: 1rem;
+}
+
+.menuButton {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .navLinks {
+        display: none;
+    }
+
+    .menuButton {
+        display: block;
+    }
+}

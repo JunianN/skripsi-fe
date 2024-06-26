@@ -6,8 +6,10 @@ import { Box, Button, Container, TextField, Typography, Link as MuiLink } from '
 import Link from 'next/link';
 import axios from 'axios';
 import { isAuthenticated } from '@/utils/auth';
+import { useAuth } from '../contexts/AuthContext';
 
 const LoginPage = () => {
+    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -27,9 +29,9 @@ const LoginPage = () => {
         try {
             const response = await axios.post('http://127.0.0.1:3001/api/login', { email, password });
             const { token } = response.data;
+            const { username } = response.data;
 
-            // Save the token to localStorage
-            localStorage.setItem('token', token);
+            login(token, username)
 
             const userRole = response.data.userRole; // Assuming the backend returns the userRole
             if (userRole === 'translator') {
@@ -37,7 +39,7 @@ const LoginPage = () => {
             } else if (userRole === 'admin') {
                 router.push('/admin/documents');
             } else {
-                router.push('/documents');
+                router.push('/');
             }
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {

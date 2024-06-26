@@ -17,12 +17,6 @@ const LandingPage = () => {
         }
     }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setIsAuthenticated(false);
-        router.push('/');
-    };
-
     return (
         <Container maxWidth="md">
             <Box textAlign="center" my={4}>
@@ -40,9 +34,6 @@ const LandingPage = () => {
                                     Submit Translation Request
                                 </Button>
                             </Link>
-                            <Button variant="outlined" color="secondary" onClick={handleLogout} sx={{ ml: 2 }}>
-                                Logout
-                            </Button>
                         </>
                     ) : (
                         <>
