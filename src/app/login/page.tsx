@@ -16,11 +16,11 @@ const LoginPage = () => {
     const router = useRouter();
 
     useEffect(() => {
-      if (isAuthenticated()) {
-        router.push('/');
-      }
+        if (isAuthenticated()) {
+            router.push('/');
+        }
     }, [router])
-    
+
 
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -28,10 +28,9 @@ const LoginPage = () => {
 
         try {
             const response = await axios.post('http://127.0.0.1:3001/api/login', { email, password });
-            const { token } = response.data;
-            const { username } = response.data;
+            const { token, username } = response.data;
 
-            login(token, username)
+            login(token, { username })
 
             const userRole = response.data.userRole; // Assuming the backend returns the userRole
             if (userRole === 'translator') {

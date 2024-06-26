@@ -9,15 +9,10 @@ import styles from './Navbar.module.css';
 
 const Navbar = () => {
     const router = useRouter();
-    const { isLoggedIn, logout, username } = useAuth();
+    const { user, isLoggedIn, logout } = useAuth();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
     // const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    const user = {
-        name: username,
-        avatarUrl: '/static/images/avatar/1.jpg',
-    };
 
     useEffect(() => {
         // Check if user is logged in
@@ -96,7 +91,7 @@ const Navbar = () => {
                             aria-label="profile"
                             onClick={handleProfileMenu}
                         >
-                            <Avatar src={user.avatarUrl} alt={user.name} />
+                            <Avatar src={user ? user.username[0] : '?'} />
                         </IconButton>
                         <Menu
                             anchorEl={profileAnchorEl}
@@ -112,7 +107,7 @@ const Navbar = () => {
                             open={Boolean(profileAnchorEl)}
                             onClose={handleProfileMenuClose}
                         >
-                            <MenuItem onClick={handleProfileMenuClose}>{user.name}</MenuItem>
+                            <MenuItem onClick={handleProfileMenuClose}>{user?.username}</MenuItem>
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </Menu>
                     </>
