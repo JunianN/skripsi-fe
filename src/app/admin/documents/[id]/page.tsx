@@ -28,6 +28,7 @@ const AdminDocumentDetailsPage = () => {
                     },
                 });
                 setFile(response.data);
+                fetchTranslators(response.data.SourceLanguage, response.data.TargetLanguage);
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
                     setError(`Error fetching document: ${error.response.data.error}`);
@@ -54,9 +55,10 @@ const AdminDocumentDetailsPage = () => {
             }
         };
 
-        const fetchTranslators = async () => {
+        const fetchTranslators = async (source, target) => {
             try {
-                const response = await axios.get('http://127.0.0.1:3001/api/admin/translators', {
+                const response = await axios.get('http://127.0.0.1:3001/api/admin/translators/by-language', {
+                    params: { source, target },
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     },
@@ -73,7 +75,6 @@ const AdminDocumentDetailsPage = () => {
 
         fetchDocument();
         fetchDiscussions();
-        fetchTranslators();
     }, [id]);
 
     const handleDownload = async () => {
@@ -384,7 +385,11 @@ const AdminDocumentDetailsPage = () => {
                                     label="Select Translator"
                                     onChange={(e) => setSelectedTranslator(e.target.value)}
                                 >
-                                    {translators.map((translator) => (
+                                    {translators.length === 0 ? (
+                                        <Alert severity="error" sx={{ mt: 2 }}>
+                                            No translators found matching the source and target languages.
+                                        </Alert>
+                                    ) : translators.map((translator) => (
                                         <MenuItem key={translator.ID} value={translator.ID}>
                                             {translator.Username}
                                         </MenuItem>
