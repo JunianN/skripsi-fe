@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
-import { Box, Button, Container, Typography, Card, CardContent, TextField, Paper, Stepper, Step, StepLabel, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Box, Alert, Button, Container, Typography, Card, CardContent, TextField, Paper, Stepper, Step, StepLabel, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import axios from 'axios';
 import PaymentDetailsModal from '@/app/components/PaymentDetailsModal';
 
@@ -138,11 +138,7 @@ const DocumentDetailsPage = () => {
                 <Typography variant="h4" gutterBottom>
                     Document Details
                 </Typography>
-                {error && (
-                    <Typography color="error" variant="body2" align="center">
-                        {error}
-                    </Typography>
-                )}
+                {error && (<Alert severity="error">{error}</Alert>)}
                 <Card>
                     <CardContent>
                         <Typography variant="h5" component="div">

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Box, Button, Container, TextField, Typography, Link as MuiLink } from '@mui/material';
+import { Box, MenuItem, Alert, Button, Container, TextField, Typography, Link as MuiLink } from '@mui/material';
 import Link from 'next/link';
 import axios from 'axios';
 import { isAuthenticated } from '@/utils/auth';
@@ -12,6 +12,8 @@ const RegisterPage = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [username, setUsername] = useState('');
+    const [role, setRole] = useState('user');
+    const [proficientLanguages, setProficientLanguages] = useState([]);
     const [error, setError] = useState('');
     const router = useRouter();
 
@@ -32,7 +34,13 @@ const RegisterPage = () => {
         }
 
         try {
-            const response = await axios.post('http://127.0.0.1:3001/api/register', { username, email, password });
+            const response = await axios.post('http://127.0.0.1:3001/api/register', {
+                username,
+                email,
+                password,
+                role,
+                proficient_languages: role === 'translator' ? proficientLanguages : []
+            });
 
             // Redirect to login page
             router.push('/login');
@@ -109,11 +117,27 @@ const RegisterPage = () => {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                     />
-                    {error && (
-                        <Typography color="error" variant='body2' align='center'>
-                            {error}
-                        </Typography>
+                    <TextField
+                        select
+                        label="Role"
+                        fullWidth
+                        value={role}
+                        onChange={(e) => setRole(e.target.value)}
+                        margin="normal"
+                    >
+                        <MenuItem value="user">User</MenuItem>
+                        <MenuItem value="translator">Translator</MenuItem>
+                    </TextField>
+                    {role === 'translator' && (
+                        <TextField
+                            label="Proficient Languages (comma separated)"
+                            fullWidth
+                            value={proficientLanguages}
+                            onChange={(e) => setProficientLanguages(e.target.value.split(','))}
+                            margin="normal"
+                        />
                     )}
+                    {error && (<Alert severity="error">{error}</Alert>)}
                     <Button
                         type="submit"
                         fullWidth
