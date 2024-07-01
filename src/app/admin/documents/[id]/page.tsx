@@ -15,6 +15,7 @@ const AdminDocumentDetailsPage = () => {
     const [newMessage, setNewMessage] = useState('');
     const [error, setError] = useState('');
     const [translators, setTranslators] = useState([]);
+    console.log("🚀 ~ AdminDocumentDetailsPage ~ translators:", translators)
     const [selectedTranslator, setSelectedTranslator] = useState('');
     const [success, setSuccess] = useState('');
     const router = useRouter();
@@ -391,7 +392,7 @@ const AdminDocumentDetailsPage = () => {
                                         </Alert>
                                     ) : translators.map((translator) => (
                                         <MenuItem key={translator.ID} value={translator.ID}>
-                                            {translator.Username}
+                                            {translator.Username} - {translator.average_rating.toFixed(1)} / 5.0 - {translator.Status}
                                         </MenuItem>
                                     ))}
                                 </Select>

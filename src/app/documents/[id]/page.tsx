@@ -19,6 +19,7 @@ const DocumentDetailsPage = () => {
     const [newMessage, setNewMessage] = useState('');
     const [averageRating, setAverageRating] = useState(null);
     const [rating, setRating] = useState(null);
+    console.log("🚀 ~ DocumentDetailsPage ~ rating:", rating)
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
@@ -224,7 +225,7 @@ const DocumentDetailsPage = () => {
                         )}
                     </CardContent>
                 </Card>
-                {!rating ? (
+                {rating.length === 0 ? (
                     <SubmitRating translatorId={file.TranslatorID} documentId={file.ID} />
                 ) : (
                     <Alert severity="success">Rating has been submitted</Alert>
