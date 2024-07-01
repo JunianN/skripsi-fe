@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
-import { Box, Alert, Button, Container, Typography, Card, CardContent, TextField, Paper, Stepper, Step, StepLabel, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Box, Alert, Button, Container, Typography, Card, CardContent, TextField, Paper, Stepper, Step, StepLabel, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Rating as MuiRating } from '@mui/material';
 import axios from 'axios';
 import PaymentDetailsModal from '@/app/components/PaymentDetailsModal';
+import SubmitRating from '@/app/components/SubmitRating';
 
 const statuses = ['Pending', 'Translating', 'Finished'];
 const pricePerPage = 100000; // price per page
@@ -13,9 +14,13 @@ const pricePerPage = 100000; // price per page
 const DocumentDetailsPage = () => {
     const { id } = useParams();
     const [file, setDocument] = useState(null);
+    console.log("🚀 ~ DocumentDetailsPage ~ file:", file)
     const [discussions, setDiscussions] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const [averageRating, setAverageRating] = useState(null);
+    const [rating, setRating] = useState(null);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
 
     const router = useRouter();
@@ -29,6 +34,14 @@ const DocumentDetailsPage = () => {
                     },
                 });
                 setDocument(response.data);
+
+                // Fetch average rating for the translator
+                const ratingResponse = await axios.get(`http://127.0.0.1:3001/api/${response.data.TranslatorID}/average-rating`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+                setAverageRating(ratingResponse.data.average_rating);
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
                     setError(error.response.data.error);
@@ -37,6 +50,23 @@ const DocumentDetailsPage = () => {
                 }
             }
         };
+
+        const fetchRating = async () => {
+            try {
+                const response = await axios.get(`http://127.0.0.1:3001/api/documents/${id}/rating`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+                setRating(response.data);
+            } catch (error) {
+                if (axios.isAxiosError(error) && error.response) {
+                    setError(error.response.data.error);
+                } else {
+                    setError('An unexpected error occurred');
+                }
+            }
+        }
 
         const fetchDiscussions = async () => {
             try {
@@ -57,6 +87,7 @@ const DocumentDetailsPage = () => {
 
         fetchDocument();
         fetchDiscussions();
+        fetchRating();
     }, [id]);
 
     const handlePostMessage = async () => {
@@ -139,6 +170,7 @@ const DocumentDetailsPage = () => {
                     Document Details
                 </Typography>
                 {error && (<Alert severity="error">{error}</Alert>)}
+                {success && <Alert severity="success">{success}</Alert>}
                 <Card>
                     <CardContent>
                         <Typography variant="h5" component="div">
@@ -179,17 +211,24 @@ const DocumentDetailsPage = () => {
 
                         )}
                         {file.Status === 'Finished' && file.PaymentConfirmed && (
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleDownload}
-                                sx={{ mt: 2, ml: 2 }}
-                            >
-                                Download Translated Document
-                            </Button>
+                            <>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={handleDownload}
+                                    sx={{ mt: 2, ml: 2 }}
+                                >
+                                    Download Translated Document
+                                </Button>
+                            </>
                         )}
                     </CardContent>
                 </Card>
+                {!rating ? (
+                    <SubmitRating translatorId={file.TranslatorID} documentId={file.ID} />
+                ) : (
+                    <Alert severity="success">Rating has been submitted</Alert>
+                )}
 
                 <Box sx={{ mt: 4 }}>
                     <Typography variant="h5" gutterBottom>
@@ -203,6 +242,16 @@ const DocumentDetailsPage = () => {
                         ))}
                     </Stepper>
                 </Box>
+
+                {file.status !== 'Pending' && averageRating !== null && (
+                    <Box sx={{ mt: 4 }}>
+                        <Typography variant="h5" gutterBottom>
+                            Translator&apos;s Rating
+                        </Typography>
+                        <MuiRating value={averageRating} precision={0.1} readOnly />
+                        <Typography variant="body1">{averageRating.toFixed(1)} / 5.0</Typography>
+                    </Box>
+                )}
 
                 <Box sx={{ mt: 4 }}>
                     <Typography variant="h5" gutterBottom>
