@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Container, Typography, Card, CardContent, Alert } from '@mui/material';
+import { Box, Button, Container, Typography, Card, CardContent, Alert, Grid } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
@@ -31,6 +31,45 @@ const AssignedDocumentsPage = () => {
         fetchDocuments();
     }, []);
 
+    const renderDocuments = (status) => {
+        return files
+            .filter((doc) => doc.Status === status)
+            .map((doc) => (
+                <Grid item xs={12} sm={6} md={4} key={doc.ID}>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h5" component="div" gutterBottom>
+                                {doc.Title}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                Description: {doc.Description}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                Source Language: {doc.SourceLanguage}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                Target Language: {doc.TargetLanguage}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                Number of Pages: {doc.NumberOfPages}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                Status: {doc.Status}
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => router.push(`documents/${doc.ID}`)}
+                                sx={{ mt: 2 }}
+                            >
+                                View Details
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            ));
+    };
+
     return (
         <Container maxWidth="md">
             <Box sx={{ mt: 4 }}>
@@ -41,35 +80,26 @@ const AssignedDocumentsPage = () => {
                 {files.length === 0 ? (
                     <Typography>No documents assigned to you.</Typography>
                 ) : (
-                    files.map((file) => (
-                        <Card key={file.ID} sx={{ mb: 2 }}>
-                            <CardContent>
-                                <Typography variant="h5" component="div">
-                                    {file.Title}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    Description: {file.Description}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    Source Language: {file.SourceLanguage}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    Target Language: {file.TargetLanguage}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    Number of Pages: {file.NumberOfPages}
-                                </Typography>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => router.push(`/translators/documents/${file.ID}`)}
-                                    sx={{ mt: 2 }}
-                                >
-                                    View Document
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    ))
+                    <>
+                        <Typography variant="h5" gutterBottom>
+                            Pending
+                        </Typography>
+                        <Grid container spacing={2}>
+                            {renderDocuments('Pending')}
+                        </Grid>
+                        <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
+                            Translating
+                        </Typography>
+                        <Grid container spacing={2}>
+                            {renderDocuments('Translating')}
+                        </Grid>
+                        <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
+                            Finished
+                        </Typography>
+                        <Grid container spacing={2}>
+                            {renderDocuments('Finished')}
+                        </Grid>
+                    </>
                 )}
             </Box>
         </Container>

@@ -1,20 +1,31 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Box, Button, Container, TextField, Typography, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Button, Container, TextField, Typography, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Alert } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
-const languages = [
-    { code: 'en', name: 'English' },
-    { code: 'es', name: 'Spanish' },
-    { code: 'fr', name: 'French' },
-    { code: 'de', name: 'German' },
-    { code: 'id', name: 'Indonesian' },
-    // Add more languages as needed
-];
+// const languages = [
+//     { code: 'en', name: 'English' },
+//     { code: 'es', name: 'Spanish' },
+//     { code: 'fr', name: 'French' },
+//     { code: 'de', name: 'German' },
+//     { code: 'id', name: 'Indonesian' },
+//     // Add more languages as needed
+// ];
 
 const pricePerPage = 100000; // Price per page
+
+function formatCurrency(value) {
+    const formatter = new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+    });
+
+    const numericValue = parseFloat(value);
+
+    return formatter.format(numericValue);
+}
 
 const SubmitTranslationPage = () => {
     const [title, setTitle] = useState('');
@@ -25,7 +36,32 @@ const SubmitTranslationPage = () => {
     const [numberOfPages, setNumberOfPages] = useState(0);
     const [error, setError] = useState('');
     const [open, setOpen] = useState(false);
+    const [languages, setLanguages] = useState()
     const router = useRouter();
+
+    useEffect(() => {
+        const fetchLanguages = async () => {
+            try {
+                // API endpoint that provides the list of languages
+                const url = 'https://libretranslate.com/languages';
+
+                // Sending a GET request to the API
+                const response = await axios.get(url);
+
+                // Accessing the data from the response
+                const languages = response.data;
+                setLanguages(response.data)
+            } catch (error) {
+                if (axios.isAxiosError(error) && error.response) {
+                    setError(`Error fetching languages: ${error.response.data.error}`);
+                } else {
+                    setError('Error fetching languages');
+                }
+            }
+        }
+
+        fetchLanguages();
+    }, []);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
@@ -36,9 +72,8 @@ const SubmitTranslationPage = () => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         setError('');
-        setOpen(true);
 
-        if (!title || !description || !file || !sourceLanguage || !targetLanguage || numberOfPages <= 0) {
+        if (!title || !description || !file || !sourceLanguage || !targetLanguage || !numberOfPages) {
             setError('Please fill in all fields and upload a file.');
             return;
         }
@@ -60,11 +95,14 @@ const SubmitTranslationPage = () => {
             });
 
             if (response.status === 200) {
-                /// Open the success modal
                 setOpen(true);
             }
         } catch (error) {
-            setError('Failed to submit the translation request. Please try again.');
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Error: ${error.response.data.error}`);
+            } else {
+                setError('Failed to submit the translation request. Please try again.');
+            }
         }
     };
 
@@ -124,7 +162,7 @@ const SubmitTranslationPage = () => {
                         value={sourceLanguage}
                         onChange={(e) => setSourceLanguage(e.target.value)}
                     >
-                        {languages.map((lang) => (
+                        {languages?.map((lang) => (
                             <MenuItem key={lang.code} value={lang.code}>
                                 {lang.name}
                             </MenuItem>
@@ -140,7 +178,7 @@ const SubmitTranslationPage = () => {
                         value={targetLanguage}
                         onChange={(e) => setTargetLanguage(e.target.value)}
                     >
-                        {languages.map((lang) => (
+                        {languages?.map((lang) => (
                             <MenuItem key={lang.code} value={lang.code}>
                                 {lang.name}
                             </MenuItem>
@@ -157,9 +195,10 @@ const SubmitTranslationPage = () => {
                         name="numberOfPages"
                         value={numberOfPages}
                         onChange={(e) => setNumberOfPages(parseInt(e.target.value))}
+                        InputProps={{ inputProps: { min: 1 } }}
                     />
                     <Typography variant="body1" sx={{ mt: 2 }}>
-                        Estimated Price: Rp{estimatedPrice}
+                        Estimated Price: {isNaN(estimatedPrice) ? formatCurrency(0) : formatCurrency(estimatedPrice)}
                     </Typography>
                     <input
                         accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -173,11 +212,7 @@ const SubmitTranslationPage = () => {
                             {file ? file.name : 'Upload Document'}
                         </Button>
                     </label>
-                    {error && (
-                        <Typography color="error" variant="body2" align="center">
-                            {error}
-                        </Typography>
-                    )}
+                    {error && (<Alert sx={{ mt: 2 }} severity="error">{error}</Alert>)}
                     <Button
                         type="submit"
                         fullWidth

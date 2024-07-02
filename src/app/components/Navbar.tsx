@@ -59,8 +59,8 @@ const Navbar = () => {
                             <Button color="inherit" onClick={() => handleNavigation('/contact')}>
                                 Contact
                             </Button>
-                            <Button color="inherit" onClick={() => handleNavigation('/dashboard')}>
-                                Dashboard
+                            <Button color="inherit" onClick={() => handleNavigation('/documents')}>
+                                Documents
                             </Button>
                         </div>
                     )

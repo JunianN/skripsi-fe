@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Box, Button, Container, Typography, Card, CardContent, Paper } from '@mui/material';
+import { Box, Button, Container, Typography, Card, CardContent, Grid, Alert } from '@mui/material';
 import axios from 'axios';
 
 const AdminDocumentsPage = () => {
@@ -31,40 +31,70 @@ const AdminDocumentsPage = () => {
         fetchDocuments();
     }, []);
 
-    return (
-        <Container maxWidth="lg">
-            <Box sx={{ mt: 4, mb: 2 }}>
-                <Typography variant="h4" gutterBottom>
-                    All Submitted Documents
-                </Typography>
-                {error && (
-                    <Typography color="error" variant="body2" align="center">
-                        {error}
-                    </Typography>
-                )}
-                {documents.map((document) => (
-                    <Card key={document.ID} sx={{ mb: 2 }}>
+    const renderDocuments = (status) => {
+        return documents
+            .filter((doc) => doc.Status === status)
+            .map((doc) => (
+                <Grid item xs={12} sm={6} md={4} key={doc.ID}>
+                    <Card>
                         <CardContent>
                             <Typography variant="h5" component="div">
-                                {document.Title}
+                                {doc.Title}
                             </Typography>
                             <Typography variant="body2" color="textSecondary">
-                                Description: {document.Description}
+                                Description: {doc.Description}
                             </Typography>
                             <Typography variant="body2" color="textSecondary">
-                                Status: {document.Status}
+                                Source Language: {doc.SourceLanguage}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                Target Language: {doc.TargetLanguage}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                Number of Pages: {doc.NumberOfPages}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                Status: {doc.Status}
                             </Typography>
                             <Button
-                                variant="outlined"
+                                variant="contained"
                                 color="primary"
-                                onClick={() => router.push(`/admin/documents/${document.ID}`)}
+                                onClick={() => router.push(`documents/${document.ID}`)}
                                 sx={{ mt: 2 }}
                             >
                                 View Details
                             </Button>
                         </CardContent>
                     </Card>
-                ))}
+                </Grid>
+            ));
+    };
+
+    return (
+        <Container maxWidth="lg">
+            <Box sx={{ mt: 4, mb: 2 }}>
+                <Typography variant="h4" gutterBottom>
+                    All Submitted Documents
+                </Typography>
+                {error && (<Alert severity="error">{error}</Alert>)}
+                <Typography variant="h5" gutterBottom>
+                    Pending
+                </Typography>
+                <Grid container spacing={2}>
+                    {renderDocuments('Pending')}
+                </Grid>
+                <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
+                    Translating
+                </Typography>
+                <Grid container spacing={2}>
+                    {renderDocuments('Translating')}
+                </Grid>
+                <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
+                    Finished
+                </Typography>
+                <Grid container spacing={2}>
+                    {renderDocuments('Finished')}
+                </Grid>
             </Box>
         </Container>
     );
