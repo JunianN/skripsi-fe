@@ -60,7 +60,7 @@ const DocumentListPage = () => {
                             <Button
                                 variant="outlined"
                                 color="primary"
-                                onClick={() => router.push(`/documents/${document.ID}`)}
+                                onClick={() => router.push(`/documents/${doc.ID}`)}
                                 sx={{ mt: 2 }}
                             >
                                 View Details

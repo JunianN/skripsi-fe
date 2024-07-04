@@ -66,6 +66,9 @@ const Navbar = () => {
                                 Contact
                             </Button>
                             )}
+                            <Button color="inherit" onClick={() => handleNavigation('/notifications')}>
+                                Notifications
+                            </Button>
                         </div>
                     )
                 }

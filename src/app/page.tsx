@@ -4,18 +4,20 @@ import React, { useEffect, useState } from 'react';
 import { Container, Box, Typography, Button, Grid, Card, CardContent, Avatar } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from './contexts/AuthContext';
 
 const LandingPage = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    // const [isAuthenticated, setIsAuthenticated] = useState(false);
     const router = useRouter();
+    const { user, isLoggedIn, logout } = useAuth();
 
-    useEffect(() => {
-        // Check if the user is authenticated
-        const token = localStorage.getItem('token');
-        if (token) {
-            setIsAuthenticated(true);
-        }
-    }, []);
+    // useEffect(() => {
+    //     // Check if the user is authenticated
+    //     const token = localStorage.getItem('token');
+    //     if (token) {
+    //         setIsAuthenticated(true);
+    //     }
+    // }, []);
 
     return (
         <Container maxWidth="lg">
@@ -27,9 +29,9 @@ const LandingPage = () => {
                 <Typography variant="h5" color="textSecondary" paragraph>
                     Your one-stop solution for managing and translating documents efficiently.
                 </Typography>
-                <Link href={'/register'}>
+                <Link href={isLoggedIn ? '/submit-translation' : '/register'}>
                     <Button variant="contained" color="primary" sx={{ mt: 2 }}>
-                        Get Started
+                        {isLoggedIn ? 'Translate Now' : 'Get Started'}
                     </Button>
                 </Link>
             </Box>
@@ -173,19 +175,21 @@ const LandingPage = () => {
             </Box>
 
             {/* Call to Action Section */}
-            <Box sx={{ textAlign: 'center', py: 6 }}>
-                <Typography variant="h4" gutterBottom>
-                    Ready to Get Started?
-                </Typography>
-                <Typography variant="h6" color="textSecondary" paragraph>
-                    Join Document Translation Manager today and experience seamless document translation management.
-                </Typography>
-                <Link href={'register'} passHref>
-                    <Button variant="contained" color="primary" sx={{ mt: 2 }}>
-                        Sign Up Now
-                    </Button>
-                </Link>
-            </Box>
+            {!isLoggedIn && (
+                <Box sx={{ textAlign: 'center', py: 6 }}>
+                    <Typography variant="h4" gutterBottom>
+                        Ready to Get Started?
+                    </Typography>
+                    <Typography variant="h6" color="textSecondary" paragraph>
+                        Join Document Translation Manager today and experience seamless document translation management.
+                    </Typography>
+                    <Link href={'register'} passHref>
+                        <Button variant="contained" color="primary" sx={{ mt: 2 }}>
+                            Sign Up Now
+                        </Button>
+                    </Link>
+                </Box>
+            )}
         </Container>
     );
 };

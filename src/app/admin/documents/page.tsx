@@ -59,7 +59,7 @@ const AdminDocumentsPage = () => {
                             <Button
                                 variant="contained"
                                 color="primary"
-                                onClick={() => router.push(`documents/${document.ID}`)}
+                                onClick={() => router.push(`documents/${doc.ID}`)}
                                 sx={{ mt: 2 }}
                             >
                                 View Details

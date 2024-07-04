@@ -36,18 +36,20 @@ const DocumentDetailsPage = () => {
                 });
                 setDocument(response.data);
 
-                // Fetch average rating for the translator
-                const ratingResponse = await axios.get(`http://127.0.0.1:3001/api/${response.data.TranslatorID}/average-rating`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    },
-                });
-                setAverageRating(ratingResponse.data.average_rating);
+                if (response.data.TranslatorID !== 0) {
+                    const ratingResponse = await axios.get(`http://127.0.0.1:3001/api/${response.data.TranslatorID}/average-rating`, {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        },
+                    });
+                    setAverageRating(ratingResponse.data.average_rating);
+                }
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
                     setError(error.response.data.error);
                 } else {
-                    setError('An unexpected error occurred');
+                    setError('An unexpected error occurred 1');
+                    console.log(`ini error nya cuy ${error}`)
                 }
             }
         };
@@ -64,7 +66,7 @@ const DocumentDetailsPage = () => {
                 if (axios.isAxiosError(error) && error.response) {
                     setError(error.response.data.error);
                 } else {
-                    setError('An unexpected error occurred');
+                    setError('An unexpected error occurred 2');
                 }
             }
         }
@@ -81,7 +83,7 @@ const DocumentDetailsPage = () => {
                 if (axios.isAxiosError(error) && error.response) {
                     setError(error.response.data.error);
                 } else {
-                    setError('An unexpected error occurred');
+                    setError('An unexpected error occurred 3');
                 }
             }
         };
@@ -108,7 +110,7 @@ const DocumentDetailsPage = () => {
             if (axios.isAxiosError(error) && error.response) {
                 setError(error.response.data.error);
             } else {
-                setError('An unexpected error occurred');
+                setError('An unexpected error occurred 4');
             }
         }
     };
@@ -132,7 +134,7 @@ const DocumentDetailsPage = () => {
             if (axios.isAxiosError(error) && error.response) {
                 setError(error.response.data.error);
             } else {
-                setError('An unexpected error occurred');
+                setError('An unexpected error occurred 5');
             }
         }
     };
@@ -225,9 +227,10 @@ const DocumentDetailsPage = () => {
                         )}
                     </CardContent>
                 </Card>
-                {rating.length === 0 ? (
+                {file.PaymentConfirmed && rating.length === 0 && (
                     <SubmitRating translatorId={file.TranslatorID} documentId={file.ID} />
-                ) : (
+                )}
+                {file.PaymentConfirmed && rating.length !== 0 && (
                     <Alert severity="success">Rating has been submitted</Alert>
                 )}
 
