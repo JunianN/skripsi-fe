@@ -7,7 +7,21 @@ import theme from '../../theme';
 
 const darktheme = createTheme({
     palette: {
-        mode: "dark",
+        // mode: "dark",
+        primary: {
+            main: '#222831',
+            dark: ''
+        },
+        secondary: {
+            main: '#393E46'
+        },
+        background: {
+            paper: '#EEEEEE',
+            default: '#EEEEEE'
+        },
+        info: {
+            main: '#00ADB5'
+        },
     },
 });
 

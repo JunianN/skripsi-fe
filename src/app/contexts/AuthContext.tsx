@@ -2,9 +2,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 type AuthContextType = {
-    user: { username: string } | null;
+    user: { username: string, userRole: string } | null;
     isLoggedIn: boolean;
-    login: (token: string, userData: { username: string }) => void;
+    login: (token: string, userData: { username: string, userRole: string }) => void;
     logout: () => void;
 };
 
@@ -12,7 +12,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState<{ username: string } | null>(null);
+    const [user, setUser] = useState<{ username: string, userRole: string } | null>(null);
 
     useEffect(() => {
         // Attempt to retrieve stored user data
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }, []);
 
-    const login = (token: string, userData: { username: string }) => {
+    const login = (token: string, userData: { username: string, userRole: string }) => {
         localStorage.setItem('token', token);
         localStorage.setItem('userInfo', JSON.stringify(userData));
         setUser(userData);

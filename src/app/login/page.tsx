@@ -28,11 +28,10 @@ const LoginPage = () => {
 
         try {
             const response = await axios.post('http://127.0.0.1:3001/api/login', { email, password });
-            const { token, username } = response.data;
+            const { token, username, userRole } = response.data;
 
-            login(token, { username })
+            login(token, { username, userRole })
 
-            const userRole = response.data.userRole; // Assuming the backend returns the userRole
             if (userRole === 'translator') {
                 router.push('/translators/assigned-documents');
             } else if (userRole === 'admin') {

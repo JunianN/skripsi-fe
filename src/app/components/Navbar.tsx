@@ -53,15 +53,19 @@ const Navbar = () => {
                             <Button color="inherit" onClick={() => handleNavigation('/')}>
                                 Home
                             </Button>
-                            <Button color="inherit" onClick={() => handleNavigation('/about')}>
-                                About
-                            </Button>
-                            <Button color="inherit" onClick={() => handleNavigation('/contact')}>
-                                Contact
-                            </Button>
                             <Button color="inherit" onClick={() => handleNavigation('/documents')}>
                                 Documents
                             </Button>
+                            <Button color="inherit" onClick={() => handleNavigation('/about')}>
+                                About
+                            </Button>
+                            {user?.userRole === 'admin' ? (
+                                <Button color="inherit" onClick={() => handleNavigation('/admin/mails')}>Mails</Button>
+                            ) : (
+                            <Button color="inherit" onClick={() => handleNavigation('/contact')}>
+                                Contact
+                            </Button>
+                            )}
                         </div>
                     )
                 }
@@ -104,6 +108,9 @@ const Navbar = () => {
                     </>
                 ) : (
                     <>
+                        <Button color="inherit" onClick={() => handleNavigation('/contact')}>
+                            Contact
+                        </Button>
                         <Button color="inherit" onClick={() => handleNavigation('/login')}>
                             Login
                         </Button>
