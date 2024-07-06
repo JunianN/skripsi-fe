@@ -82,6 +82,7 @@ const Navbar = () => {
 
     const handleNavigation = (path: string) => {
         handleClose();
+        handleNotifClose();
         router.push(path);
     };
 
@@ -114,7 +115,7 @@ const Navbar = () => {
                             <Button color="inherit" onClick={() => handleNavigation('/')}>
                                 Home
                             </Button>
-                            <Button color="inherit" onClick={() => handleNavigation('/documents')}>
+                            <Button color="inherit" onClick={() => handleNavigation(user?.userRole === 'admin' ? '/admin/documents' : user?.userRole === 'translator' ? '/translators/documents' : '/documents')}>
                                 Documents
                             </Button>
                             <Button color="inherit" onClick={() => handleNavigation('/about')}>
@@ -159,8 +160,8 @@ const Navbar = () => {
                                         <Alert severity="info">No notifications</Alert>
                                     )}
                                     {notifications.length > 0 && notifications?.map((notif) => (
-                                        <ListItem key={notif.ID} sx={{ ':hover': { bgcolor: '#D6D6D6' }, bgcolor: notif.Read ? 'background.default' : '#E0E0E0'}}>
-                                            <ListItemText sx={{ cursor: 'pointer' }} onClick={() => handleNavigation(`/documents/${notif.DocumentID}`)} primary={notif.Message} secondary={new Date(notif.CreatedAt).toLocaleString()} />
+                                        <ListItem key={notif.ID} sx={{ ':hover': { bgcolor: '#D6D6D6' }, bgcolor: notif.Read ? 'background.default' : '#E0E0E0' }}>
+                                            <ListItemText sx={{ cursor: 'pointer' }} onClick={() => handleNavigation(user?.userRole === 'translator' ? `/translators/documents/${notif.DocumentID}` : `/documents/${notif.DocumentID}`)} primary={notif.Message} secondary={new Date(notif.CreatedAt).toLocaleString()} />
                                         </ListItem>
                                     ))}
                                 </List>
@@ -199,13 +200,28 @@ const Navbar = () => {
                     </>
                 ) : (
                     <>
-                        <Button color="inherit" onClick={() => handleNavigation('/contact')}>
-                            Contact
+                        <Button sx={{mx:1}} color="inherit" onClick={() => handleNavigation('/contact')}>
+                            Contact Us
                         </Button>
-                        <Button color="inherit" onClick={() => handleNavigation('/login')}>
+                        <Button variant="outlined"
+                            color="inherit"
+                            sx={{
+                                '&:hover': {
+                                    bgcolor: 'white', 
+                                    color: 'black',
+                                },
+                                mx:1
+                            }} onClick={() => handleNavigation('/login')}>
                             Login
                         </Button>
-                        <Button color="inherit" onClick={() => handleNavigation('/register')}>
+                        <Button variant="outlined"
+                            color="inherit"
+                            sx={{
+                                '&:hover': {
+                                    bgcolor: 'white', 
+                                    color: 'black',
+                                },
+                            }} onClick={() => handleNavigation('/register')}>
                             Register
                         </Button>
                     </>

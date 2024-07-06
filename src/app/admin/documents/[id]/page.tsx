@@ -322,7 +322,7 @@ const AdminDocumentDetailsPage = () => {
                 {success && <Alert severity="success">{success}</Alert>}
                 <Card>
                     <CardContent>
-                        <Typography variant="h5" component="div">
+                        <Typography variant="h5" component="div" gutterBottom>
                             {file.Title}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
@@ -407,7 +407,7 @@ const AdminDocumentDetailsPage = () => {
                             </FormControl>
                         )}
                         {file.TranslatorApprovalStatus === 'Pending' && (
-                            <Alert severity="info">This document has been assigned to a translator. Waiting for the translator reponse.</Alert>
+                            <Alert severity="info" sx={{mt:2}}>This document has been assigned to a translator. Waiting for the translator reponse.</Alert>
                         )}
                         {file.TranslatedFilePath && file.Status === "Translating" && (
                             <>

@@ -39,10 +39,10 @@ const DocumentListPage = () => {
                 <Grid item xs={12} sm={6} md={4} key={doc.ID}>
                     <Card>
                         <CardContent>
-                            <Typography variant="h5" component="div">
+                            <Typography variant="h5" component="div" gutterBottom sx={{whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>
                                 {doc.Title}
                             </Typography>
-                            <Typography variant="body2" color="textSecondary">
+                            <Typography variant="body2" color="textSecondary" sx={{whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>
                                 Description: {doc.Description}
                             </Typography>
                             <Typography variant="body2" color="textSecondary">

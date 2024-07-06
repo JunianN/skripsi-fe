@@ -176,7 +176,7 @@ const DocumentDetailsPage = () => {
                 {success && <Alert severity="success">{success}</Alert>}
                 <Card>
                     <CardContent>
-                        <Typography variant="h5" component="div">
+                        <Typography variant="h5" component="div" gutterBottom>
                             {file.Title}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">

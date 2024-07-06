@@ -165,7 +165,7 @@ const TranslatorDocumentDetailsPage = () => {
                 {success && <Alert severity="success">{success}</Alert>}
                 <Card>
                     <CardContent>
-                        <Typography variant="h5" component="div">
+                        <Typography variant="h5" component="div" gutterBottom>
                             {file.Title}
                         </Typography>
                         <Typography variant="body2" color="textSecondary">
@@ -180,13 +180,16 @@ const TranslatorDocumentDetailsPage = () => {
                         <Typography variant="body2" color="textSecondary">
                             Number of Pages: {file.NumberOfPages}
                         </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            Status: {file.Status}
+                        </Typography>
                         <Button
                             variant="outlined"
                             color="primary"
-                            onClick={() => router.push('/translators/assigned-documents')}
+                            onClick={() => router.push('/translators/documents')}
                             sx={{ mt: 2 }}
                         >
-                            Back to Assigned Documents
+                            Back to Documents
                         </Button>
                         <Button
                             variant="contained"
