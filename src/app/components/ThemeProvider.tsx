@@ -10,14 +10,14 @@ const darktheme = createTheme({
         // mode: "dark",
         primary: {
             main: '#222831',
-            dark: ''
+            dark: '#20252E'
         },
         secondary: {
             main: '#393E46'
         },
         background: {
             paper: '#EEEEEE',
-            default: '#EEEEEE'
+            default: '#EEEEEE',
         },
         info: {
             main: '#00ADB5'

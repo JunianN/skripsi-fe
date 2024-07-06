@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Avatar } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Avatar, Box, List, ListItem, ListItemText, Alert, Divider } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import MenuIcon from '@mui/icons-material/Menu';
+import Badge from '@mui/material/Badge';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './Navbar.module.css';
 
@@ -12,6 +15,54 @@ const Navbar = () => {
     const { user, isLoggedIn, logout } = useAuth();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
+    const [notifications, setNotifications] = useState([]);
+    const [countNotif, setCountNotif] = useState(0);
+    console.log("🚀 ~ Navbar ~ countNotif:", countNotif)
+    const [notifAnchorEl, setNotifAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [error, setError] = useState('');
+    console.log("🚀 ~ Navbar ~ notifications:", notifications)
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const response = await axios.get('http://127.0.0.1:3001/api/notifications', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+                const notifs = response.data
+                setNotifications(notifs);
+                const count = notifs.filter(notif => notif.Read === false).length;
+                setCountNotif(count)
+            } catch (error) {
+                if (axios.isAxiosError(error) && error.response) {
+                    setError(`Error fetching notifications: ${error.response.data.error}`);
+                } else {
+                    setError('An unexpected error occurred while fetching notifications');
+                }
+            }
+        };
+
+        fetchNotifications();
+    }, []);
+
+    const handleMarkAsRead = async () => {
+        try {
+            await axios.post('http://127.0.0.1:3001/api/notifications/read', {}, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
+            setNotifications(notifications.map(notification => ({ ...notification, Read: true })));
+            setCountNotif(0)
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                setError(`Error marking notifications as read: ${error.response.data.error}`);
+            } else {
+                setError('An unexpected error occurred while marking notifications as read');
+            }
+        }
+    };
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -32,6 +83,16 @@ const Navbar = () => {
     const handleNavigation = (path: string) => {
         handleClose();
         router.push(path);
+    };
+
+    const open = Boolean(notifAnchorEl);
+
+    const handleNotif = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setNotifAnchorEl(event.currentTarget);
+    };
+
+    const handleNotifClose = () => {
+        setNotifAnchorEl(null);
     };
 
     const handleLogout = () => {
@@ -62,13 +123,48 @@ const Navbar = () => {
                             {user?.userRole === 'admin' ? (
                                 <Button color="inherit" onClick={() => handleNavigation('/admin/mails')}>Mails</Button>
                             ) : (
-                            <Button color="inherit" onClick={() => handleNavigation('/contact')}>
-                                Contact
-                            </Button>
+                                <Button color="inherit" onClick={() => handleNavigation('/contact')}>
+                                    Contact
+                                </Button>
                             )}
-                            <Button color="inherit" onClick={() => handleNavigation('/notifications')}>
-                                Notifications
+                            <Button
+                                id='notif-button'
+                                aria-controls={open ? 'notif-menu' : undefined}
+                                aria-haspopup='true'
+                                aria-expanded={open ? 'true' : undefined}
+                                onClick={handleNotif}
+                                sx={{ p: 0 }}
+                                color="inherit"
+                            >
+                                <Badge badgeContent={countNotif} color='secondary'>
+                                    <NotificationsIcon />
+                                </Badge>
                             </Button>
+                            <Menu
+                                id='notif-menu'
+                                anchorEl={notifAnchorEl}
+                                open={open}
+                                onClose={handleNotifClose}
+                                MenuListProps={{
+                                    "aria-labelledby": 'notif-button'
+                                }}
+                            >
+                                <List>
+                                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                        {/* <Typography sx={{ mr: 3, cursor:'pointer', ':hover': { textDecoration:'underline'} }} variant='subtitle1' >Mark all as read</Typography> */}
+                                        <Button variant='text' size='small' sx={{ mr: 2 }} onClick={handleMarkAsRead}>Mark all as read</Button>
+                                    </Box>
+                                    <Divider variant='middle' />
+                                    {notifications.length === 0 && (
+                                        <Alert severity="info">No notifications</Alert>
+                                    )}
+                                    {notifications.length > 0 && notifications?.map((notif) => (
+                                        <ListItem key={notif.ID} sx={{ ':hover': { bgcolor: '#D6D6D6' }, bgcolor: notif.Read ? 'background.default' : '#E0E0E0'}}>
+                                            <ListItemText sx={{ cursor: 'pointer' }} onClick={() => handleNavigation(`/documents/${notif.DocumentID}`)} primary={notif.Message} secondary={new Date(notif.CreatedAt).toLocaleString()} />
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Menu>
                         </div>
                     )
                 }
@@ -93,15 +189,7 @@ const Navbar = () => {
                         </IconButton>
                         <Menu
                             anchorEl={profileAnchorEl}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
                             keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
                             open={Boolean(profileAnchorEl)}
                             onClose={handleProfileMenuClose}
                         >
