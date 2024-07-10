@@ -33,7 +33,7 @@ const LoginPage = () => {
             login(token, { username, userRole })
 
             if (userRole === 'translator') {
-                router.push('/translators/assigned-documents');
+                router.push('/translators/documents');
             } else if (userRole === 'admin') {
                 router.push('/admin/documents');
             } else {
