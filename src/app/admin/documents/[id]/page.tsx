@@ -280,7 +280,6 @@ const AdminDocumentDetailsPage = () => {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 }
             });
-            setSuccess('Payment approved successfully');
             setError('');
             setFile({ ...file, PaymentConfirmed: true });
         } catch (error) {
@@ -310,7 +309,10 @@ const AdminDocumentDetailsPage = () => {
         );
     }
 
-    const activeStep = statuses.indexOf(file.Status);
+    var activeStep = statuses.indexOf(file.Status);
+    if (file.Status === "Finished") {
+        activeStep = 3
+    }
 
     return (
         <Container maxWidth="md">
@@ -442,7 +444,7 @@ const AdminDocumentDetailsPage = () => {
                             </>
                         )}
                         {file.TranslatedApprovalStatus === 'Approved' && file.PaymentReceiptFilePath === '' && (
-                            <Alert severity="info">This document has been translated. Waiting for payment from the user.</Alert>
+                            <Alert severity="info" sx={{mt:2}}>This document has been translated. Waiting for payment from the user.</Alert>
                         )}
                         {(file.Status === "Finished" && file.PaymentReceiptFilePath !== '') && (
                             <Button
@@ -465,7 +467,7 @@ const AdminDocumentDetailsPage = () => {
                             </Button>
                         )}
                         {file.PaymentConfirmed && (
-                            <Alert severity="success">Payment has been confirmed.</Alert>
+                            <Alert severity="success" sx={{mt:2}}>Payment has been confirmed.</Alert>
                         )}
                     </CardContent>
                 </Card>

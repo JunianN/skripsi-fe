@@ -17,11 +17,8 @@ const Navbar = () => {
     const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
     const [notifications, setNotifications] = useState([]);
     const [countNotif, setCountNotif] = useState(0);
-    console.log("🚀 ~ Navbar ~ countNotif:", countNotif)
     const [notifAnchorEl, setNotifAnchorEl] = React.useState<null | HTMLElement>(null);
     const [error, setError] = useState('');
-    console.log("🚀 ~ Navbar ~ notifications:", notifications)
-
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
@@ -161,7 +158,7 @@ const Navbar = () => {
                                     )}
                                     {notifications.length > 0 && notifications?.map((notif) => (
                                         <ListItem key={notif.ID} sx={{ ':hover': { bgcolor: '#D6D6D6' }, bgcolor: notif.Read ? 'background.default' : '#E0E0E0' }}>
-                                            <ListItemText sx={{ cursor: 'pointer' }} onClick={() => handleNavigation(user?.userRole === 'translator' ? `/translators/documents/${notif.DocumentID}` : `/documents/${notif.DocumentID}`)} primary={notif.Message} secondary={new Date(notif.CreatedAt).toLocaleString()} />
+                                            <ListItemText sx={{ cursor: 'pointer' }} onClick={() => handleNavigation(user?.userRole === 'translator' ? `/translators/documents/${notif.DocumentID}` : user?.userRole ==='admin' ? `/admin/documents/${notif.DocumentID}` : `/documents/${notif.DocumentID}`)} primary={notif.Message} secondary={new Date(notif.CreatedAt).toLocaleString()} />
                                         </ListItem>
                                     ))}
                                 </List>

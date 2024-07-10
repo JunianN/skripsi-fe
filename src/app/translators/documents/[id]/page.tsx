@@ -240,10 +240,10 @@ const TranslatorDocumentDetailsPage = () => {
                             </form>
                         )}
                         {file.TranslatedApprovalStatus === 'Pending' && (
-                            <Alert severity="info">Translated document uploaded. Waiting for admin review.</Alert>
+                            <Alert severity="info" sx={{mt:2}}>Translated document uploaded. Waiting for admin review.</Alert>
                         )}
                         {file.TranslatedApprovalStatus === 'Approved' && (
-                            <Alert severity="success">Translated document uploaded. Approved by Admin.</Alert>
+                            <Alert severity="success" sx={{mt:2}}>Translated document uploaded. Approved by Admin.</Alert>
                         )}
                     </CardContent>
                 </Card>

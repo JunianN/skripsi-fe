@@ -68,7 +68,6 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            setSuccess('Payment receipt uploaded successfully');
             setError('');
             setReceiptUploaded(true);
         } catch (error) {
@@ -80,6 +79,17 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
             setSuccess('');
         }
     };
+
+    function formatCurrency(value) {
+        const formatter = new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+        });
+    
+        const numericValue = parseFloat(value);
+    
+        return formatter.format(numericValue);
+    }
 
     return (
         <Modal
@@ -99,7 +109,7 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
                     Account Number: 123456789
                 </Typography>
                 <Typography variant="body1" sx={{ mt: 2 }}>
-                    Amount: Rp{totalPrice}
+                    Amount: {formatCurrency(totalPrice)}
                 </Typography>
                 {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
                 {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}

@@ -38,10 +38,10 @@ const AssignedDocumentsPage = () => {
                 <Grid item xs={12} sm={6} md={4} key={doc.ID}>
                     <Card>
                         <CardContent>
-                            <Typography variant="h5" component="div" gutterBottom>
+                            <Typography variant="h5" component="div" gutterBottom sx={{whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>
                                 {doc.Title}
                             </Typography>
-                            <Typography variant="body2" color="textSecondary">
+                            <Typography variant="body2" color="textSecondary" sx={{whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>
                                 Description: {doc.Description}
                             </Typography>
                             <Typography variant="body2" color="textSecondary">
@@ -71,7 +71,7 @@ const AssignedDocumentsPage = () => {
     };
 
     return (
-        <Container maxWidth="md">
+        <Container maxWidth="lg">
             <Box sx={{ mt: 4 }}>
                 <Typography variant="h4" gutterBottom>
                     Assigned Documents
@@ -84,21 +84,33 @@ const AssignedDocumentsPage = () => {
                         <Typography variant="h5" gutterBottom>
                             Pending
                         </Typography>
-                        <Grid container spacing={2}>
-                            {renderDocuments('Pending')}
-                        </Grid>
+                        {renderDocuments('Pending').length === 0 ? (<Alert severity="info">No document</Alert>) : (
+                            <>
+                                <Grid container spacing={2}>
+                                    {renderDocuments('Pending')}
+                                </Grid>
+                            </>
+                        )}
                         <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
                             Translating
                         </Typography>
-                        <Grid container spacing={2}>
-                            {renderDocuments('Translating')}
-                        </Grid>
+                        {renderDocuments('Translating').length === 0 ? (<Alert severity="info">No document</Alert>) : (
+                            <>
+                                <Grid container spacing={2}>
+                                    {renderDocuments('Translating')}
+                                </Grid>
+                            </>
+                        )}
                         <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
                             Finished
                         </Typography>
-                        <Grid container spacing={2}>
-                            {renderDocuments('Finished')}
-                        </Grid>
+                        {renderDocuments('Finished').length === 0 ? (<Alert severity="info">No document</Alert>) : (
+                            <>
+                                <Grid container spacing={2}>
+                                    {renderDocuments('Finished')}
+                                </Grid>
+                            </>
+                        )}
                     </>
                 )}
             </Box>

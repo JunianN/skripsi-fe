@@ -80,21 +80,33 @@ const AdminDocumentsPage = () => {
                 <Typography variant="h5" gutterBottom>
                     Pending
                 </Typography>
-                <Grid container spacing={2}>
-                    {renderDocuments('Pending')}
-                </Grid>
+                {renderDocuments('Pending').length === 0 ? (<Alert severity="info">No document</Alert>) : (
+                    <>
+                        <Grid container spacing={2}>
+                            {renderDocuments('Pending')}
+                        </Grid>
+                    </>
+                )}
                 <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
                     Translating
                 </Typography>
-                <Grid container spacing={2}>
-                    {renderDocuments('Translating')}
-                </Grid>
+                {renderDocuments('Translating').length === 0 ? (<Alert severity="info">No document</Alert>) : (
+                    <>
+                        <Grid container spacing={2}>
+                            {renderDocuments('Translating')}
+                        </Grid>
+                    </>
+                )}
                 <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
                     Finished
                 </Typography>
-                <Grid container spacing={2}>
-                    {renderDocuments('Finished')}
-                </Grid>
+                {renderDocuments('Finished').length === 0 ? (<Alert severity="info">No document</Alert>) : (
+                    <>
+                        <Grid container spacing={2}>
+                            {renderDocuments('Finished')}
+                        </Grid>
+                    </>
+                )}
             </Box>
         </Container>
     );

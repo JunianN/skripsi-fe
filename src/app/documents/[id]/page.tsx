@@ -46,10 +46,9 @@ const DocumentDetailsPage = () => {
                 }
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
-                    setError(error.response.data.error);
+                    // setError(error.response.data.error);
                 } else {
-                    setError('An unexpected error occurred 1');
-                    console.log(`ini error nya cuy ${error}`)
+                    setError('An unexpected error occurred');
                 }
             }
         };
@@ -164,6 +163,7 @@ const DocumentDetailsPage = () => {
     if (file.Status === "Finished") {
         activeStep = 3
     }
+
     const totalPrice = file.NumberOfPages * pricePerPage;
 
     return (
@@ -231,12 +231,12 @@ const DocumentDetailsPage = () => {
                     <SubmitRating translatorId={file.TranslatorID} documentId={file.ID} />
                 )}
                 {file.PaymentConfirmed && rating.length !== 0 && (
-                    <Alert severity="success">Rating has been submitted</Alert>
+                    <Alert severity="success" sx={{mt:2}}>Rating has been submitted</Alert>
                 )}
 
                 <Box sx={{ mt: 4 }}>
                     <Typography variant="h5" gutterBottom>
-                        Translation Status Progress
+                        Status Progress
                     </Typography>
                     <Stepper activeStep={activeStep}>
                         {statuses.map((status, index) => (
