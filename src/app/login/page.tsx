@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Box, Button, Container, TextField, Typography, Link as MuiLink } from '@mui/material';
 import Link from 'next/link';
 import axios from 'axios';
-import { isAuthenticated } from '../../utils/auth';
+import { isAuthenticated } from '@/utils/auth';
 import { useAuth } from '../contexts/AuthContext';
 
 const LoginPage = () => {
@@ -40,6 +40,7 @@ const LoginPage = () => {
                 router.push('/');
             }
         } catch (error) {
+            console.log("🚀 ~ handleLogin ~ error:", error)
             if (axios.isAxiosError(error) && error.response) {
                 setError(error.response.data.error);
             } else {

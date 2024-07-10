@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Box, MenuItem, Alert, Button, Container, TextField, Typography, Link as MuiLink } from '@mui/material';
 import Link from 'next/link';
 import axios from 'axios';
-import { isAuthenticated } from '../../utils/auth';
+import { isAuthenticated } from '@/utils/auth';
 
 const RegisterPage = () => {
     const [email, setEmail] = useState('');
