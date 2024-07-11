@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { Box, Button, Container, Typography, Card, CardContent, TextField, Paper, Stepper, Step, StepLabel, MenuItem, Select, FormControl, InputLabel, Alert } from '@mui/material';
+import { Star, FiberManualRecord } from '@mui/icons-material'
 import axios from 'axios';
 
 const statuses = ['Pending', 'Translating', 'Finished'];
@@ -393,8 +394,16 @@ const AdminDocumentDetailsPage = () => {
                                             No translators found matching the source and target languages.
                                         </Alert>
                                     ) : translators.map((translator) => (
-                                        <MenuItem key={translator.ID} value={translator.ID}>
-                                            {translator.Username} - {translator.average_rating.toFixed(1)} / 5.0 - {translator.Status}
+                                        <MenuItem key={translator.ID} value={translator.ID} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <Box>
+                                                {translator.Username} <FiberManualRecord sx={{fontSize:10, mx:1}} /> {translator.Status}
+                                            </Box>
+                                            <Box sx={{ display: 'flex' }}>
+                                                <Typography sx={{ mr: 0.5, pt: 0.2 }}>
+                                                    {translator.average_rating.toFixed(1)}
+                                                </Typography>
+                                                <Star sx={{ color: 'orange' }} />
+                                            </Box>
                                         </MenuItem>
                                     ))}
                                 </Select>
@@ -409,7 +418,7 @@ const AdminDocumentDetailsPage = () => {
                             </FormControl>
                         )}
                         {file.TranslatorApprovalStatus === 'Pending' && (
-                            <Alert severity="info" sx={{mt:2}}>This document has been assigned to a translator. Waiting for the translator reponse.</Alert>
+                            <Alert severity="info" sx={{ mt: 2 }}>This document has been assigned to a translator. Waiting for the translator reponse.</Alert>
                         )}
                         {file.TranslatedFilePath && file.Status === "Translating" && (
                             <>
@@ -444,7 +453,7 @@ const AdminDocumentDetailsPage = () => {
                             </>
                         )}
                         {file.TranslatedApprovalStatus === 'Approved' && file.PaymentReceiptFilePath === '' && (
-                            <Alert severity="info" sx={{mt:2}}>This document has been translated. Waiting for payment from the user.</Alert>
+                            <Alert severity="info" sx={{ mt: 2 }}>This document has been translated. Waiting for payment from the user.</Alert>
                         )}
                         {(file.Status === "Finished" && file.PaymentReceiptFilePath !== '') && (
                             <Button
@@ -467,7 +476,7 @@ const AdminDocumentDetailsPage = () => {
                             </Button>
                         )}
                         {file.PaymentConfirmed && (
-                            <Alert severity="success" sx={{mt:2}}>Payment has been confirmed.</Alert>
+                            <Alert severity="success" sx={{ mt: 2 }}>Payment has been confirmed.</Alert>
                         )}
                     </CardContent>
                 </Card>
