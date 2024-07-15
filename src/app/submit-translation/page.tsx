@@ -5,15 +5,6 @@ import { Box, Button, Container, TextField, Typography, MenuItem, Dialog, Dialog
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
-// const languages = [
-//     { code: 'en', name: 'English' },
-//     { code: 'es', name: 'Spanish' },
-//     { code: 'fr', name: 'French' },
-//     { code: 'de', name: 'German' },
-//     { code: 'id', name: 'Indonesian' },
-//     // Add more languages as needed
-// ];
-
 const pricePerPage = 100000; // Price per page
 
 function formatCurrency(value) {

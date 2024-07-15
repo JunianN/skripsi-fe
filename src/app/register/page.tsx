@@ -2,10 +2,21 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Box, MenuItem, Alert, Button, Container, TextField, Typography, Link as MuiLink } from '@mui/material';
+import { Box, MenuItem, Alert, Button, Container, TextField, Typography, Link as MuiLink, InputLabel, Select, SelectChangeEvent, OutlinedInput, Checkbox, ListItemText, FormControl } from '@mui/material';
 import Link from 'next/link';
 import axios from 'axios';
 import { isAuthenticated } from '@/utils/auth';
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
 
 const RegisterPage = () => {
     const [email, setEmail] = useState('');
@@ -13,11 +24,34 @@ const RegisterPage = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [username, setUsername] = useState('');
     const [role, setRole] = useState('user');
-    const [proficientLanguages, setProficientLanguages] = useState([]);
+    const [proficientLanguages, setProficientLanguages] = useState<string[]>([]);
+    const [languages, setLanguages] = useState()
     const [error, setError] = useState('');
     const router = useRouter();
 
     useEffect(() => {
+        const fetchLanguages = async () => {
+            try {
+                // API endpoint that provides the list of languages
+                const url = 'https://libretranslate.com/languages';
+
+                // Sending a GET request to the API
+                const response = await axios.get(url);
+
+                // Accessing the data from the response
+                const languages = response.data;
+                setLanguages(response.data)
+            } catch (error) {
+                if (axios.isAxiosError(error) && error.response) {
+                    setError(`Error fetching languages: ${error.response.data.error}`);
+                } else {
+                    setError('Error fetching languages');
+                }
+            }
+        }
+
+        fetchLanguages();
+
         if (isAuthenticated()) {
             router.push('/');
         }
@@ -51,6 +85,15 @@ const RegisterPage = () => {
                 setError('An unexpected error occured');
             }
         }
+    };
+
+    const handleLanguageChange = (event: SelectChangeEvent<typeof proficientLanguages>) => {
+        const {
+            target: { value },
+        } = event;
+        setProficientLanguages(
+            typeof value === 'string' ? value.split(',') : value,
+        );
     };
 
     return (
@@ -129,13 +172,27 @@ const RegisterPage = () => {
                         <MenuItem value="translator">Translator</MenuItem>
                     </TextField>
                     {role === 'translator' && (
-                        <TextField
-                            label="Proficient Languages (comma separated)"
-                            fullWidth
-                            value={proficientLanguages}
-                            onChange={(e) => setProficientLanguages(e.target.value.split(','))}
-                            margin="normal"
-                        />
+                        <FormControl sx={{ mt: 1, width: 400 }}>
+                            <InputLabel id='proficient-languages-label'>Proficient Languages</InputLabel>
+                            <Select
+                                labelId='proficient-languages-label'
+                                id='proficient-languages-checkbox'
+                                multiple
+                                value={proficientLanguages}
+                                onChange={handleLanguageChange}
+                                input={<OutlinedInput label="Proficient Languages" />}
+                                renderValue={(selected) => selected?.join(',')}
+                                MenuProps={MenuProps}
+                                fullWidth
+                            >
+                                {languages?.map((language) => (
+                                    <MenuItem key={language.code} value={language.name}>
+                                        <Checkbox checked={proficientLanguages.indexOf(language.name) > -1} />
+                                        <ListItemText primary={language.name} />
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     )}
                     {error && (<Alert severity="error">{error}</Alert>)}
                     <Button

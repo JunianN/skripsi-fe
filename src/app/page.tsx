@@ -82,7 +82,7 @@ const LandingPage = () => {
             </Box>
 
             {/* How It Works Section */}
-            <Box sx={{ py: 6, backgroundColor: '#ffffff' }}>
+            <Box sx={{ py: 6, px: 2, backgroundColor: '#ffffff', borderRadius: '16px' }}>
                 <Typography variant="h4" gutterBottom textAlign="center">
                     How It Works
                 </Typography>

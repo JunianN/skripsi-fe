@@ -113,13 +113,13 @@ const Navbar = () => {
                             <Button color="inherit" onClick={() => handleNavigation('/')}>
                                 Home
                             </Button>
-                            <Button color="inherit" onClick={() => handleNavigation(user?.userRole === 'admin' ? '/admin/documents' : user?.userRole === 'translator' ? '/translators/documents' : '/documents')}>
+                            <Button color="inherit" onClick={() => handleNavigation(payload?.userRole === 'admin' ? '/admin/documents' : payload?.userRole === 'translator' ? '/translators/documents' : '/documents')}>
                                 Documents
                             </Button>
                             <Button color="inherit" onClick={() => handleNavigation('/about')}>
                                 About
                             </Button>
-                            {user?.userRole === 'admin' ? (
+                            {payload?.userRole === 'admin' ? (
                                 <Button color="inherit" onClick={() => handleNavigation('/admin/mails')}>Mails</Button>
                             ) : (
                                 <Button color="inherit" onClick={() => handleNavigation('/contact')}>
@@ -159,7 +159,7 @@ const Navbar = () => {
                                     )}
                                     {notifications.length > 0 && notifications?.map((notif) => (
                                         <ListItem key={notif.ID} sx={{ ':hover': { bgcolor: '#D6D6D6' }, bgcolor: notif.Read ? 'background.default' : '#E0E0E0' }}>
-                                            <ListItemText sx={{ cursor: 'pointer' }} onClick={() => handleNavigation(user?.userRole === 'translator' ? `/translators/documents/${notif.DocumentID}` : user?.userRole ==='admin' ? `/admin/documents/${notif.DocumentID}` : `/documents/${notif.DocumentID}`)} primary={notif.Message} secondary={new Date(notif.CreatedAt).toLocaleString()} />
+                                            <ListItemText sx={{ cursor: 'pointer' }} onClick={() => handleNavigation(payload?.userRole === 'translator' ? `/translators/documents/${notif.DocumentID}` : payload?.userRole ==='admin' ? `/admin/documents/${notif.DocumentID}` : `/documents/${notif.DocumentID}`)} primary={notif.Message} secondary={new Date(notif.CreatedAt).toLocaleString()} />
                                         </ListItem>
                                     ))}
                                 </List>
@@ -184,7 +184,7 @@ const Navbar = () => {
                             aria-label="profile"
                             onClick={handleProfileMenu}
                         >
-                            <Avatar src={user ? user.username[0] : '?'} />
+                            <Avatar src={payload ? payload.email[0] : '?'} />
                         </IconButton>
                         <Menu
                             anchorEl={profileAnchorEl}
@@ -192,7 +192,7 @@ const Navbar = () => {
                             open={Boolean(profileAnchorEl)}
                             onClose={handleProfileMenuClose}
                         >
-                            <MenuItem onClick={handleProfileMenuClose}>{user?.username}</MenuItem>
+                            <MenuItem onClick={handleProfileMenuClose}>{payload?.email}</MenuItem>
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </Menu>
                     </>
