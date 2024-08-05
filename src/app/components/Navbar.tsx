@@ -12,7 +12,7 @@ import styles from './Navbar.module.css';
 
 const Navbar = () => {
     const router = useRouter();
-    const { user, isLoggedIn, logout, payload } = useAuth();
+    const { isLoggedIn, logout, payload } = useAuth();
     console.log("🚀 ~ Navbar ~ payload:", payload)
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);

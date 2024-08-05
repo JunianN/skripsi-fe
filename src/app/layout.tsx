@@ -5,6 +5,7 @@ import "./globals.css";
 import MyThemeProvider from "./components/ThemeProvider";
 import Navbar from "@/app/components/Navbar";
 import { AuthProvider } from "./contexts/AuthContext";
+import BackgroundWrapper from "./components/BackgroundWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,7 +31,9 @@ export default function RootLayout({
           <body className={inter.className}>
             <MyThemeProvider>
               <Navbar />
-              {children}
+              <BackgroundWrapper>
+                {children}
+              </BackgroundWrapper>
             </MyThemeProvider>
           </body>
         </AuthProvider>
