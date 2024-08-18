@@ -1,6 +1,7 @@
 'use client'
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import jwt from 'jsonwebtoken'
+import { useRouter } from 'next/navigation';
 
 const secret = process.env.NEXT_PUBLIC_SECRET_KEY;
 
@@ -14,6 +15,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+    const router = useRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [payload, setPayload] = useState<string | jwt.JwtPayload>('');
 
@@ -21,11 +23,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // Attempt to retrieve stored user data
         const token = localStorage.getItem('token');
         if (token) {
-            const payload = jwt.verify(token, secret)
-            setPayload(payload)
-            setIsLoggedIn(true);
+            try {
+                const payload = jwt.verify(token, secret);
+                setPayload(payload);
+                setIsLoggedIn(true);
+            } catch (error) {
+                if (error.name === 'TokenExpiredError') {
+                    console.error('Token expired. Please log in again.');
+
+                    localStorage.removeItem('token');
+
+                    router.push('/login')
+                } else {
+                    // Handle other errors (e.g., invalid token)
+                    console.error('Invalid token.');
+                    localStorage.removeItem('token');
+                    window.location.href = '/login';
+                }
+            }
         }
-    }, []);
+    }, [router]);
 
     const login = (token: string) => {
         const payload = jwt.verify(token, secret)
