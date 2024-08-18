@@ -30,7 +30,7 @@ const LoginPage = () => {
             const response = await axios.post('http://127.0.0.1:3001/api/login', { email, password });
             const { token, username, userRole } = response.data;
 
-            login(token, { username, userRole })
+            login(token)
 
             if (userRole === 'translator') {
                 router.push('/translators/documents');
