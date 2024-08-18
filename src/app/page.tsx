@@ -9,7 +9,7 @@ import { useAuth } from './contexts/AuthContext';
 const LandingPage = () => {
     // const [isAuthenticated, setIsAuthenticated] = useState(false);
     const router = useRouter();
-    const { user, isLoggedIn, logout } = useAuth();
+    const { isLoggedIn, logout } = useAuth();
 
     // useEffect(() => {
     //     // Check if the user is authenticated
