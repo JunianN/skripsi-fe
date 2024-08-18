@@ -9,7 +9,7 @@ type AuthContextType = {
     isLoggedIn: boolean;
     login: (token: string) => void;
     logout: () => void;
-    payload: string | jwt.JwtPayload;
+    payload;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
