@@ -18,6 +18,11 @@ function formatCurrency(value) {
     return formatter.format(numericValue);
 }
 
+interface Language {
+    code: string;
+    name: string;
+  }
+
 const SubmitTranslationPage = () => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -27,7 +32,7 @@ const SubmitTranslationPage = () => {
     const [numberOfPages, setNumberOfPages] = useState(0);
     const [error, setError] = useState('');
     const [open, setOpen] = useState(false);
-    const [languages, setLanguages] = useState()
+    const [languages, setLanguages] = useState<Language[]>([]);
     const router = useRouter();
 
     useEffect(() => {
