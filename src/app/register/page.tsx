@@ -18,6 +18,11 @@ const MenuProps = {
     },
 };
 
+interface Language {
+    code: string;
+    name: string;
+  }
+
 const RegisterPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -25,21 +30,14 @@ const RegisterPage = () => {
     const [username, setUsername] = useState('');
     const [role, setRole] = useState('user');
     const [proficientLanguages, setProficientLanguages] = useState<string[]>([]);
-    const [languages, setLanguages] = useState()
+    const [languages, setLanguages] = useState<Language[]>([]);
     const [error, setError] = useState('');
     const router = useRouter();
 
     useEffect(() => {
         const fetchLanguages = async () => {
             try {
-                // API endpoint that provides the list of languages
-                const url = 'https://libretranslate.com/languages';
-
-                // Sending a GET request to the API
-                const response = await axios.get(url);
-
-                // Accessing the data from the response
-                const languages = response.data;
+                const response = await axios.get('https://libretranslate.com/languages');
                 setLanguages(response.data)
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
