@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Box, Button, Container, TextField, Typography, Link as MuiLink } from '@mui/material';
+import { Box, Alert, Button, Container, TextField, Typography, Link as MuiLink } from '@mui/material';
 import Link from 'next/link';
 import axios from 'axios';
 import { isAuthenticated } from '@/utils/auth';
@@ -27,7 +27,7 @@ const LoginPage = () => {
         setError('');
 
         try {
-            const response = await axios.post('http://127.0.0.1:3001/api/login', { email, password });
+            const response = await axios.post('https://doc-translation-api.onrender.com/api/login', { email, password });
             const { token, username, userRole } = response.data;
 
             login(token)
@@ -40,7 +40,6 @@ const LoginPage = () => {
                 router.push('/');
             }
         } catch (error) {
-            console.log("🚀 ~ handleLogin ~ error:", error)
             if (axios.isAxiosError(error) && error.response) {
                 setError(error.response.data.error);
             } else {
@@ -89,11 +88,7 @@ const LoginPage = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    {error && (
-                        <Typography color="error" variant="body2" align="center">
-                            {error}
-                        </Typography>
-                    )}
+                    {error && (<Alert severity="error">{error}</Alert>)}
                     <Button
                         type="submit"
                         fullWidth
