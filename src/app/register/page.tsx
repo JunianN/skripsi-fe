@@ -66,7 +66,7 @@ const RegisterPage = () => {
         }
 
         try {
-            const response = await axios.post('http://127.0.0.1:3001/api/register', {
+            const response = await axios.post('https://doc-translation-api.onrender.com/api/register', {
                 username,
                 email,
                 password,

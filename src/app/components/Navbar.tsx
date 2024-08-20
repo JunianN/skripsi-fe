@@ -192,7 +192,7 @@ const Navbar = () => {
                             open={Boolean(profileAnchorEl)}
                             onClose={handleProfileMenuClose}
                         >
-                            <MenuItem onClick={handleProfileMenuClose}>{payload?.email}</MenuItem>
+                            <MenuItem onClick={handleProfileMenuClose}>{payload?.username}</MenuItem>
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </Menu>
                     </>
