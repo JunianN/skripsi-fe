@@ -480,7 +480,7 @@ const AdminDocumentDetailsPage = () => {
                       languages.
                     </Alert>
                   ) : (
-                    translators.map((translator) => (
+                    translators?.map((translator) => (
                       <MenuItem
                         key={translator.ID}
                         value={translator.ID}
