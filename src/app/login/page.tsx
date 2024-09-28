@@ -34,10 +34,13 @@ const LoginPage = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://127.0.0.1:3001/api/login', {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        'https://doc-translation-api.onrender.com/api/login',
+        {
+          email,
+          password,
+        }
+      );
       const { token, userRole } = response.data;
 
       login(token);
