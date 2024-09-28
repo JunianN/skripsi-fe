@@ -16,7 +16,6 @@ import { useRouter } from 'next/navigation';
 
 const DocumentListPage = () => {
   const [documents, setDocuments] = useState([]);
-  console.log('🚀 ~ DocumentListPage ~ documents:', documents);
   const [error, setError] = useState('');
   const router = useRouter();
 
