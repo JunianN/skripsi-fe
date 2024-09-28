@@ -42,7 +42,7 @@ const Navbar = () => {
     const fetchNotifications = async () => {
       try {
         const response = await axios.get(
-          'http://127.0.0.1:3001/api/notifications',
+          'https://doc-translation-api.onrender.com/api/notifications',
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -70,7 +70,7 @@ const Navbar = () => {
   const handleMarkAsRead = async () => {
     try {
       await axios.post(
-        'http://127.0.0.1:3001/api/notifications/read',
+        'https://doc-translation-api.onrender.com/api/notifications/read',
         {},
         {
           headers: {
