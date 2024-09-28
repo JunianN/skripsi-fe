@@ -474,7 +474,7 @@ const AdminDocumentDetailsPage = () => {
                   label="Select Translator"
                   onChange={(e) => setSelectedTranslator(e.target.value)}
                 >
-                  {translators.length === 0 ? (
+                  {translators?.length === 0 ? (
                     <Alert severity="error" sx={{ mt: 2 }}>
                       No translators found matching the source and target
                       languages.
