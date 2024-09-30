@@ -17,7 +17,6 @@ import axios from 'axios';
 const TranslatorDocumentDetailsPage = () => {
   const { id } = useParams();
   const [file, setFile] = useState(null);
-  console.log('🚀 ~ TranslatorDocumentDetailsPage ~ file:', file);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [translatedFile, setTranslatedFile] = useState(null);
@@ -272,7 +271,7 @@ const TranslatorDocumentDetailsPage = () => {
                     color="primary"
                     sx={{ mt: 2 }}
                   >
-                    Upload Translated Document
+                    Submit
                   </Button>
                 </form>
               )}

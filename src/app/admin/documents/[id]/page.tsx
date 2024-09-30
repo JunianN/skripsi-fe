@@ -510,7 +510,7 @@ const AdminDocumentDetailsPage = () => {
                   onClick={handleAssign}
                   sx={{ mt: 2 }}
                 >
-                  Assign to Translator
+                  Assign
                 </Button>
               </FormControl>
             )}
