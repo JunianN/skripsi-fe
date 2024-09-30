@@ -553,14 +553,14 @@ const AdminDocumentDetailsPage = () => {
               </>
             )}
             {file.TranslatedApprovalStatus === 'Approved' &&
-              file.PaymentReceiptFilePath === '' && (
+              file.PaymentReceiptContent === null && (
                 <Alert severity="info" sx={{ mt: 2 }}>
                   This document has been translated. Waiting for payment from
                   the user.
                 </Alert>
               )}
             {file.Status === 'Finished' &&
-              file.PaymentReceiptFilePath !== '' && (
+              file.PaymentReceiptContent !== null && (
                 <Button
                   variant="contained"
                   color="secondary"
@@ -572,7 +572,7 @@ const AdminDocumentDetailsPage = () => {
               )}
             {!file.PaymentConfirmed &&
               file.Status === 'Finished' &&
-              file.PaymentReceiptFilePath !== '' && (
+              file.PaymentReceiptContent !== null && (
                 <Button
                   variant="contained"
                   color="primary"
