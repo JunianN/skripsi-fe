@@ -41,7 +41,7 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
             },
           }
         );
-        if (response.data.PaymentReceiptFilePath) {
+        if (response.data.PaymentReceiptContent) {
           setReceiptUploaded(true);
         }
       } catch (error) {
