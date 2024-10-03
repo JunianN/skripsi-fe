@@ -526,19 +526,19 @@ const AdminDocumentDetailsPage = () => {
                   variant="contained"
                   color="primary"
                   onClick={handleDownloadTranslated}
-                  sx={{ mt: 2, ml: 2 }}
+                  sx={{ mt: 2 }}
                 >
                   Download Translated Document
                 </Button>
                 {file.TranslatedApprovalStatus === 'Pending' && (
-                  <>
+                  <Box>
                     <Button
                       variant="contained"
-                      color="primary"
+                      color="success"
                       onClick={handleApproveTranslated}
-                      sx={{ mt: 2, ml: 2 }}
+                      sx={{ mt: 2 }}
                     >
-                      Approve Translated Document
+                      Approve
                     </Button>
                     <Button
                       variant="contained"
@@ -546,9 +546,9 @@ const AdminDocumentDetailsPage = () => {
                       onClick={handleRejectTranslated}
                       sx={{ mt: 2, ml: 2 }}
                     >
-                      Reject Translated Document
+                      Reject
                     </Button>
-                  </>
+                  </Box>
                 )}
               </>
             )}
