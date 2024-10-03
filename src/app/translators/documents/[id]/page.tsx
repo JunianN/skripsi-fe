@@ -104,7 +104,11 @@ const TranslatorDocumentDetailsPage = () => {
       );
       setSuccess(response.data.message);
       setError('');
-      setFile({ ...file, TranslatorApprovalStatus: 'Accepted' });
+      setFile({
+        ...file,
+        TranslatorApprovalStatus: 'Accepted',
+        Status: 'Translating',
+      });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         setError(`Approval error: ${error.response.data.error}`);
