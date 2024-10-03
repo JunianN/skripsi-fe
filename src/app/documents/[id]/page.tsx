@@ -142,7 +142,7 @@ const DocumentDetailsPage = () => {
       if (axios.isAxiosError(error) && error.response) {
         setError(error.response.data.error);
       } else {
-        setError('An unexpected error occurred 4');
+        setError('An unexpected error occurred');
       }
     }
   };
@@ -284,7 +284,7 @@ const DocumentDetailsPage = () => {
           </Stepper>
         </Box>
 
-        {file.status !== 'Pending' && averageRating !== null && (
+        {file.Status !== 'Pending' && averageRating !== null && (
           <Box sx={{ mt: 4 }}>
             <Typography variant="h5" gutterBottom>
               Translator&apos;s Rating
@@ -315,6 +315,18 @@ const DocumentDetailsPage = () => {
               label="New Message"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
+              sx={{
+                backgroundColor: 'white',
+                '& .MuiFilledInput-root': {
+                  backgroundColor: 'white',
+                  '&:hover': {
+                    backgroundColor: '#f5f5f5',
+                  },
+                  '&.Mui-focused': {
+                    backgroundColor: '#f0f0f0',
+                  },
+                },
+              }}
             />
             <Button
               variant="contained"

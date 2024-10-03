@@ -11,8 +11,14 @@ import {
   CardContent,
   Alert,
   TextField,
+  Stepper,
+  Step,
+  StepLabel,
+  Paper,
 } from '@mui/material';
 import axios from 'axios';
+
+const statuses = ['Pending', 'Translating', 'Finished'];
 
 const TranslatorDocumentDetailsPage = () => {
   const { id } = useParams();
@@ -21,6 +27,8 @@ const TranslatorDocumentDetailsPage = () => {
   const [success, setSuccess] = useState('');
   const [translatedFile, setTranslatedFile] = useState(null);
   const router = useRouter();
+  const [discussions, setDiscussions] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
     const fetchDocument = async () => {
@@ -170,6 +178,32 @@ const TranslatorDocumentDetailsPage = () => {
     }
   };
 
+  const handlePostMessage = async () => {
+    if (!newMessage.trim()) {
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `https://doc-translation-api.onrender.com/api/documents/${id}/discussions`,
+        { message: newMessage },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+      setDiscussions([...discussions, response.data]);
+      setNewMessage('');
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setError(error.response.data.error);
+      } else {
+        setError('An unexpected error occurred');
+      }
+    }
+  };
+
   if (!file) {
     return (
       <Container maxWidth="md">
@@ -182,6 +216,11 @@ const TranslatorDocumentDetailsPage = () => {
         </Box>
       </Container>
     );
+  }
+
+  var activeStep = statuses.indexOf(file.Status);
+  if (file.Status === 'Finished') {
+    activeStep = 3;
   }
 
   return (
@@ -287,6 +326,62 @@ const TranslatorDocumentDetailsPage = () => {
             )}
           </CardContent>
         </Card>
+      </Box>
+
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h5" gutterBottom>
+          Status Progress
+        </Typography>
+        <Stepper activeStep={activeStep}>
+          {statuses.map((status, index) => (
+            <Step key={index}>
+              <StepLabel>{status}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+      </Box>
+
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h5" gutterBottom>
+          Discussion
+        </Typography>
+        {discussions.map((discussion) => (
+          <Paper key={discussion.ID} sx={{ p: 2, mb: 2 }}>
+            <Typography variant="body1">{discussion.Message}</Typography>
+            <Typography variant="body2" color="textSecondary">
+              {discussion.UserRole === 'admin' ? 'Admin' : 'User'}
+            </Typography>
+          </Paper>
+        ))}
+        <Box sx={{ display: 'flex', mt: 2 }}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            label="New Message"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            sx={{
+              backgroundColor: 'white',
+              '& .MuiFilledInput-root': {
+                backgroundColor: 'white',
+                '&:hover': {
+                  backgroundColor: '#f5f5f5',
+                },
+                '&.Mui-focused': {
+                  backgroundColor: '#f0f0f0',
+                },
+              },
+            }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handlePostMessage}
+            sx={{ ml: 2 }}
+          >
+            Send
+          </Button>
+        </Box>
       </Box>
     </Container>
   );
