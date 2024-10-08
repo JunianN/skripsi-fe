@@ -11,6 +11,8 @@ import {
   Alert,
 } from '@mui/material';
 import axios from 'axios';
+import { useLanguage } from '../contexts/LanguageContext';
+import { contactPageTranslations } from '../translations/contactPageTranslations';
 
 const ContactPage = () => {
   const [name, setName] = useState('');
@@ -18,6 +20,9 @@ const ContactPage = () => {
   const [message, setMessage] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+
+  const { language } = useLanguage();
+  const t = contactPageTranslations[language];
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -27,7 +32,7 @@ const ContactPage = () => {
         'https://doc-translation-api.onrender.com/api/mail',
         { name, email, message }
       );
-      setSuccess(response.data.message);
+      setSuccess(t.successMessage);
       setError('');
       setName('');
       setEmail('');
@@ -36,7 +41,7 @@ const ContactPage = () => {
       if (axios.isAxiosError(error) && error.response) {
         setError(error.response.data.error);
       } else {
-        setError('An unexpected error occurred while fetching the document');
+        setError(t.unexpectedError);
       }
     }
   };
@@ -45,7 +50,7 @@ const ContactPage = () => {
     <Container maxWidth="md">
       <Box sx={{ py: 6 }}>
         <Typography variant="h2" gutterBottom textAlign="center">
-          Contact Us
+          {t.pageTitle}
         </Typography>
         <Typography
           variant="h5"
@@ -53,8 +58,7 @@ const ContactPage = () => {
           paragraph
           textAlign="center"
         >
-          We would love to hear from you. Please fill out the form below to get
-          in touch with us.
+          {t.pageDescription}
         </Typography>
         {success && <Alert severity="success">{success}</Alert>}
         {error && <Alert severity="error">{error}</Alert>}
@@ -62,7 +66,7 @@ const ContactPage = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Name"
+                label={t.name}
                 variant="outlined"
                 fullWidth
                 required
@@ -72,7 +76,7 @@ const ContactPage = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Email"
+                label={t.email}
                 type="email"
                 variant="outlined"
                 fullWidth
@@ -83,7 +87,7 @@ const ContactPage = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="Message"
+                label={t.message}
                 variant="outlined"
                 fullWidth
                 required
@@ -96,7 +100,7 @@ const ContactPage = () => {
           </Grid>
           <Box sx={{ textAlign: 'center', mt: 4 }}>
             <Button type="submit" variant="contained" color="primary">
-              Send Message
+              {t.sendMessage}
             </Button>
           </Box>
         </Box>

@@ -26,9 +26,23 @@ import {
 import axios from 'axios';
 import PaymentDetailsModal from '@/app/components/PaymentDetailsModal';
 import SubmitRating from '@/app/components/SubmitRating';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { documentDetailsPageTranslations } from '../../translations/documentDetailsPageTranslations';
 
-const statuses = ['Pending', 'Translating', 'Finished'];
 const pricePerPage = 100000; // price per page
+
+const getStatusIndex = (status: string) => {
+  switch (status.toLowerCase()) {
+    case 'pending':
+      return 0;
+    case 'translating':
+      return 1;
+    case 'finished':
+      return 2;
+    default:
+      return 0;
+  }
+};
 
 const DocumentDetailsPage = () => {
   const { id } = useParams();
@@ -42,6 +56,10 @@ const DocumentDetailsPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const router = useRouter();
+  const { language } = useLanguage();
+  const t = documentDetailsPageTranslations[language];
+
+  const statuses = [t.pending, t.translating, t.finished];
 
   useEffect(() => {
     const fetchDocument = async () => {
@@ -71,7 +89,7 @@ const DocumentDetailsPage = () => {
         if (axios.isAxiosError(error) && error.response) {
           // setError(error.response.data.error);
         } else {
-          setError('An unexpected error occurred');
+          setError(t.unexpectedError);
         }
       }
     };
@@ -91,7 +109,7 @@ const DocumentDetailsPage = () => {
         if (axios.isAxiosError(error) && error.response) {
           setError(error.response.data.error);
         } else {
-          setError('An unexpected error occurred 2');
+          setError(t.unexpectedError);
         }
       }
     };
@@ -111,7 +129,7 @@ const DocumentDetailsPage = () => {
         if (axios.isAxiosError(error) && error.response) {
           setError(error.response.data.error);
         } else {
-          setError('An unexpected error occurred 3');
+          setError(t.unexpectedError);
         }
       }
     };
@@ -119,7 +137,7 @@ const DocumentDetailsPage = () => {
     fetchDocument();
     fetchDiscussions();
     fetchRating();
-  }, [id]);
+  }, [id, t]);
 
   const handlePostMessage = async () => {
     if (!newMessage.trim()) {
@@ -142,7 +160,7 @@ const DocumentDetailsPage = () => {
       if (axios.isAxiosError(error) && error.response) {
         setError(error.response.data.error);
       } else {
-        setError('An unexpected error occurred');
+        setError(t.unexpectedError);
       }
     }
   };
@@ -169,7 +187,7 @@ const DocumentDetailsPage = () => {
       if (axios.isAxiosError(error) && error.response) {
         setError(error.response.data.error);
       } else {
-        setError('An unexpected error occurred 5');
+        setError(t.unexpectedError);
       }
     }
   };
@@ -182,21 +200,21 @@ const DocumentDetailsPage = () => {
       <Container maxWidth="md">
         <Box sx={{ mt: 4 }}>
           <Typography variant="h4" gutterBottom>
-            Document Details
+            {t.pageTitle}
           </Typography>
           {error && (
             <Typography color="error" variant="body2" align="center">
               {error}
             </Typography>
           )}
-          <Typography>Loading...</Typography>
+          <Typography>{t.loading}</Typography>
         </Box>
       </Container>
     );
   }
 
-  var activeStep = statuses.indexOf(file.Status);
-  if (file.Status === 'Finished') {
+  var activeStep = getStatusIndex(file.Status);
+  if (getStatusIndex(file.Status) === 2) {
     activeStep = 3;
   }
 
@@ -206,7 +224,7 @@ const DocumentDetailsPage = () => {
     <Container maxWidth="md">
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4" gutterBottom>
-          Document Details
+          {t.pageTitle}
         </Typography>
         {error && <Alert severity="error">{error}</Alert>}
         {success && <Alert severity="success">{success}</Alert>}
@@ -216,19 +234,19 @@ const DocumentDetailsPage = () => {
               {file.Title}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Description: {file.Description}
+              {t.description}: {file.Description}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Source Language: {file.SourceLanguage}
+              {t.sourceLanguage}: {file.SourceLanguage}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Target Language: {file.TargetLanguage}
+              {t.targetLanguage}: {file.TargetLanguage}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Number of Pages: {file.NumberOfPages}
+              {t.numberOfPages}: {file.NumberOfPages}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Status: {file.Status}
+              {t.status}: {file.Status}
             </Typography>
             <Button
               variant="outlined"
@@ -236,19 +254,19 @@ const DocumentDetailsPage = () => {
               onClick={() => router.push('/documents')}
               sx={{ mt: 2 }}
             >
-              Back to Document List
+              {t.backToDocumentList}
             </Button>
-            {file.Status === 'Finished' && !file.PaymentConfirmed && (
+            {getStatusIndex(file.Status) === 2 && !file.PaymentConfirmed && (
               <Button
                 variant="contained"
                 color="secondary"
                 onClick={handleOpenModal}
                 sx={{ mt: 2, ml: 2 }}
               >
-                View Payment Details
+                {t.viewPaymentDetails}
               </Button>
             )}
-            {file.Status === 'Finished' && file.PaymentConfirmed && (
+            {getStatusIndex(file.Status) === 2 && file.PaymentConfirmed && (
               <>
                 <Button
                   variant="contained"
@@ -256,24 +274,24 @@ const DocumentDetailsPage = () => {
                   onClick={handleDownload}
                   sx={{ mt: 2, ml: 2 }}
                 >
-                  Download Translated Document
+                  {t.downloadTranslatedDocument}
                 </Button>
               </>
             )}
           </CardContent>
         </Card>
-        {file.PaymentConfirmed && rating.length === 0 && (
+        {file.PaymentConfirmed && rating?.length === 0 && (
           <SubmitRating translatorId={file.TranslatorID} documentId={file.ID} />
         )}
-        {file.PaymentConfirmed && rating.length !== 0 && (
+        {file.PaymentConfirmed && rating?.length !== 0 && (
           <Alert severity="success" sx={{ mt: 2 }}>
-            Rating has been submitted
+            {t.ratingSubmitted}
           </Alert>
         )}
 
         <Box sx={{ mt: 4 }}>
           <Typography variant="h5" gutterBottom>
-            Status Progress
+            {t.statusProgress}
           </Typography>
           <Stepper activeStep={activeStep}>
             {statuses.map((status, index) => (
@@ -284,10 +302,10 @@ const DocumentDetailsPage = () => {
           </Stepper>
         </Box>
 
-        {file.Status !== 'Pending' && averageRating !== null && (
+        {getStatusIndex(file.Status) !== 0 && averageRating !== null && (
           <Box sx={{ mt: 4 }}>
             <Typography variant="h5" gutterBottom>
-              Translator&apos;s Rating
+              {t.translatorRating}
             </Typography>
             <MuiRating value={averageRating} precision={0.1} readOnly />
             <Typography variant="body1">
@@ -298,13 +316,13 @@ const DocumentDetailsPage = () => {
 
         <Box sx={{ mt: 4 }}>
           <Typography variant="h5" gutterBottom>
-            Discussion
+            {t.discussion}
           </Typography>
           {discussions.map((discussion) => (
             <Paper key={discussion.ID} sx={{ p: 2, mb: 2 }}>
               <Typography variant="body1">{discussion.Message}</Typography>
               <Typography variant="body2" color="textSecondary">
-                {discussion.UserRole === 'admin' ? 'Admin' : 'User'}
+                {discussion.UserRole === 'admin' ? t.admin : t.user}
               </Typography>
             </Paper>
           ))}
@@ -312,7 +330,7 @@ const DocumentDetailsPage = () => {
             <TextField
               fullWidth
               variant="outlined"
-              label="New Message"
+              label={t.newMessage}
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               sx={{
@@ -334,7 +352,7 @@ const DocumentDetailsPage = () => {
               onClick={handlePostMessage}
               sx={{ ml: 2 }}
             >
-              Send
+              {t.send}
             </Button>
           </Box>
         </Box>

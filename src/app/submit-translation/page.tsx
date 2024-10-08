@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -17,24 +17,37 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '../contexts/LanguageContext';
+import { submitTranslationPageTranslations } from '../translations/submitTranslationPageTranslations';
 
 const pricePerPage = 100000; // Price per page
 
-function formatCurrency(value) {
-  const formatter = new Intl.NumberFormat('id-ID', {
+function formatCurrency(value: number, locale: string) {
+  const formatter = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: 'IDR',
   });
 
-  const numericValue = parseFloat(value);
-
-  return formatter.format(numericValue);
+  return formatter.format(value);
 }
 
 interface Language {
   code: string;
   name: string;
 }
+
+const languages: Language[] = [
+  { code: 'id', name: 'Indonesian' },
+  { code: 'en', name: 'English' },
+  { code: 'fr', name: 'French' },
+  { code: 'es', name: 'Spanish' },
+  { code: 'ru', name: 'Russian' },
+  { code: 'ar', name: 'Arabic' },
+  { code: 'zh', name: 'Chinese' },
+  { code: 'hi', name: 'Hindi' },
+  { code: 'pt', name: 'Portuguese' },
+  { code: 'it', name: 'Italian' },
+];
 
 const SubmitTranslationPage = () => {
   const [title, setTitle] = useState('');
@@ -45,32 +58,9 @@ const SubmitTranslationPage = () => {
   const [numberOfPages, setNumberOfPages] = useState(0);
   const [error, setError] = useState('');
   const [open, setOpen] = useState(false);
-  const [languages, setLanguages] = useState<Language[]>([]);
   const router = useRouter();
-
-  useEffect(() => {
-    const fetchLanguages = async () => {
-      try {
-        // API endpoint that provides the list of languages
-        const url = 'https://libretranslate.com/languages';
-
-        // Sending a GET request to the API
-        const response = await axios.get(url);
-
-        // Accessing the data from the response
-        const languages = response.data;
-        setLanguages(response.data);
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          setError(`Error fetching languages: ${error.response.data.error}`);
-        } else {
-          setError('Error fetching languages');
-        }
-      }
-    };
-
-    fetchLanguages();
-  }, []);
+  const { language } = useLanguage();
+  const t = submitTranslationPageTranslations[language];
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -90,7 +80,7 @@ const SubmitTranslationPage = () => {
       !targetLanguage ||
       !numberOfPages
     ) {
-      setError('Please fill in all fields and upload a file.');
+      setError(t.fillAllFields);
       return;
     }
 
@@ -121,7 +111,7 @@ const SubmitTranslationPage = () => {
       if (axios.isAxiosError(error) && error.response) {
         setError(`Error: ${error.response.data.error}`);
       } else {
-        setError('Failed to submit the translation request. Please try again.');
+        setError(t.failedSubmission);
       }
     }
   };
@@ -144,7 +134,7 @@ const SubmitTranslationPage = () => {
         }}
       >
         <Typography component="h1" variant="h5">
-          Submit Translation Request
+          {t.pageTitle}
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
@@ -153,7 +143,7 @@ const SubmitTranslationPage = () => {
             required
             fullWidth
             id="title"
-            label="Title"
+            label={t.title}
             name="title"
             autoComplete="title"
             autoFocus
@@ -166,7 +156,7 @@ const SubmitTranslationPage = () => {
             required
             fullWidth
             id="description"
-            label="Description"
+            label={t.description}
             name="description"
             autoComplete="description"
             value={description}
@@ -178,7 +168,7 @@ const SubmitTranslationPage = () => {
             required
             fullWidth
             select
-            label="Source Language"
+            label={t.sourceLanguage}
             value={sourceLanguage}
             onChange={(e) => setSourceLanguage(e.target.value)}
           >
@@ -194,7 +184,7 @@ const SubmitTranslationPage = () => {
             required
             fullWidth
             select
-            label="Target Language"
+            label={t.targetLanguage}
             value={targetLanguage}
             onChange={(e) => setTargetLanguage(e.target.value)}
           >
@@ -211,17 +201,17 @@ const SubmitTranslationPage = () => {
             fullWidth
             type="number"
             id="numberOfPages"
-            label="Number of Pages"
+            label={t.numberOfPages}
             name="numberOfPages"
             value={numberOfPages}
             onChange={(e) => setNumberOfPages(parseInt(e.target.value))}
             InputProps={{ inputProps: { min: 1 } }}
           />
           <Typography variant="body1" sx={{ mt: 2 }}>
-            Estimated Price:{' '}
+            {t.estimatedPrice}{' '}
             {isNaN(estimatedPrice)
-              ? formatCurrency(0)
-              : formatCurrency(estimatedPrice)}
+              ? formatCurrency(0, t.currency)
+              : formatCurrency(estimatedPrice, t.currency)}
           </Typography>
           <input
             accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -237,7 +227,7 @@ const SubmitTranslationPage = () => {
               fullWidth
               sx={{ mt: 2 }}
             >
-              {file ? file.name : 'Upload Document'}
+              {file ? file.name : t.uploadDocument}
             </Button>
           </label>
           {error && (
@@ -251,19 +241,17 @@ const SubmitTranslationPage = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Submit
+            {t.submit}
           </Button>
         </Box>
         <Dialog open={open} onClose={handleClose}>
-          <DialogTitle>Success</DialogTitle>
+          <DialogTitle>{t.successTitle}</DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              Your document has been submitted successfully.
-            </DialogContentText>
+            <DialogContentText>{t.successMessage}</DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="primary" autoFocus>
-              Go to Document List
+              {t.goToDocumentList}
             </Button>
           </DialogActions>
         </Dialog>

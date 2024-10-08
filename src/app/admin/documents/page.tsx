@@ -13,11 +13,15 @@ import {
   Alert,
 } from '@mui/material';
 import axios from 'axios';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { adminDocumentsPageTranslations } from '../../translations/adminDocumentsPageTranslations';
 
 const AdminDocumentsPage = () => {
   const [documents, setDocuments] = useState([]);
   const [error, setError] = useState('');
   const router = useRouter();
+  const { language } = useLanguage();
+  const t = adminDocumentsPageTranslations[language];
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -35,13 +39,13 @@ const AdminDocumentsPage = () => {
         if (axios.isAxiosError(error) && error.response) {
           setError(error.response.data.error);
         } else {
-          setError('An unexpected error occurred');
+          setError(t.unexpectedError);
         }
       }
     };
 
     fetchDocuments();
-  }, []);
+  }, [t]);
 
   const renderDocuments = (status) => {
     return documents
@@ -71,19 +75,19 @@ const AdminDocumentsPage = () => {
                   textOverflow: 'ellipsis',
                 }}
               >
-                Description: {doc.Description}
+                {t.description}: {doc.Description}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Source Language: {doc.SourceLanguage}
+                {t.sourceLanguage}: {doc.SourceLanguage}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Target Language: {doc.TargetLanguage}
+                {t.targetLanguage}: {doc.TargetLanguage}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Number of Pages: {doc.NumberOfPages}
+                {t.numberOfPages}: {doc.NumberOfPages}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Status: {doc.Status}
+                {t.status}: {doc.Status}
               </Typography>
               <Button
                 variant="contained"
@@ -91,7 +95,7 @@ const AdminDocumentsPage = () => {
                 onClick={() => router.push(`documents/${doc.ID}`)}
                 sx={{ mt: 2 }}
               >
-                View Details
+                {t.viewDetails}
               </Button>
             </CardContent>
           </Card>
@@ -103,14 +107,14 @@ const AdminDocumentsPage = () => {
     <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 2 }}>
         <Typography variant="h4" gutterBottom>
-          All Submitted Documents
+          {t.pageTitle}
         </Typography>
         {error && <Alert severity="error">{error}</Alert>}
         <Typography variant="h5" gutterBottom>
-          Pending
+          {t.pending}
         </Typography>
         {renderDocuments('Pending').length === 0 ? (
-          <Alert severity="info">No document</Alert>
+          <Alert severity="info">{t.noDocument}</Alert>
         ) : (
           <>
             <Grid container spacing={2}>
@@ -119,10 +123,10 @@ const AdminDocumentsPage = () => {
           </>
         )}
         <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
-          Translating
+          {t.translating}
         </Typography>
         {renderDocuments('Translating').length === 0 ? (
-          <Alert severity="info">No document</Alert>
+          <Alert severity="info">{t.noDocument}</Alert>
         ) : (
           <>
             <Grid container spacing={2}>
@@ -131,10 +135,10 @@ const AdminDocumentsPage = () => {
           </>
         )}
         <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
-          Finished
+          {t.finished}
         </Typography>
         {renderDocuments('Finished').length === 0 ? (
-          <Alert severity="info">No document</Alert>
+          <Alert severity="info">{t.noDocument}</Alert>
         ) : (
           <>
             <Grid container spacing={2}>

@@ -5,6 +5,7 @@ import './globals.css';
 import MyThemeProvider from './components/ThemeProvider';
 import Navbar from '@/app/components/Navbar';
 import { AuthProvider } from './contexts/AuthContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 import BackgroundWrapper from './components/BackgroundWrapper';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -27,18 +28,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
-          <MyThemeProvider>
-            <BackgroundWrapper>
-              <Navbar />
-              <main style={{ minHeight: 'calc(100vh - 64px)' }}>
-                {' '}
-                {/* Adjust 64px to match your Navbar height */}
-                {children}
-              </main>
-            </BackgroundWrapper>
-          </MyThemeProvider>
-        </AuthProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <MyThemeProvider>
+              <BackgroundWrapper>
+                <Navbar />
+                <main style={{ minHeight: 'calc(100vh - 64px)' }}>
+                  {' '}
+                  {/* Adjust 64px to match your Navbar height */}
+                  {children}
+                </main>
+              </BackgroundWrapper>
+            </MyThemeProvider>
+          </AuthProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

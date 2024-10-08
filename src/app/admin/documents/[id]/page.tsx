@@ -22,8 +22,21 @@ import {
 } from '@mui/material';
 import { Star, FiberManualRecord } from '@mui/icons-material';
 import axios from 'axios';
+import { useLanguage } from '@/app/contexts/LanguageContext';
+import { adminDocumentDetailsPageTranslations } from '../../../translations/adminDocumentDetailsPageTranslations';
 
-const statuses = ['Pending', 'Translating', 'Finished'];
+const getStatusIndex = (status: string) => {
+  switch (status.toLowerCase()) {
+    case 'pending':
+      return 0;
+    case 'translating':
+      return 1;
+    case 'finished':
+      return 2;
+    default:
+      return 0;
+  }
+};
 
 const AdminDocumentDetailsPage = () => {
   const { id } = useParams();
@@ -35,6 +48,10 @@ const AdminDocumentDetailsPage = () => {
   const [selectedTranslator, setSelectedTranslator] = useState('');
   const [success, setSuccess] = useState('');
   const router = useRouter();
+  const { language } = useLanguage();
+  const t = adminDocumentDetailsPageTranslations[language];
+
+  const statuses = [t.pending, t.translating, t.finished];
 
   useEffect(() => {
     const fetchDocument = async () => {
@@ -384,14 +401,14 @@ const AdminDocumentDetailsPage = () => {
               {error}
             </Typography>
           )}
-          <Typography>Loading...</Typography>
+          <Typography>{t.loading}</Typography>
         </Box>
       </Container>
     );
   }
 
-  var activeStep = statuses.indexOf(file.Status);
-  if (file.Status === 'Finished') {
+  var activeStep = getStatusIndex(file.Status);
+  if (getStatusIndex(file.Status) === 2) {
     activeStep = 3;
   }
 
@@ -399,7 +416,7 @@ const AdminDocumentDetailsPage = () => {
     <Container maxWidth="md">
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4" gutterBottom>
-          Document Details
+          {t.pageTitle}
         </Typography>
         {error && <Alert severity="error">{error}</Alert>}
         {success && <Alert severity="success">{success}</Alert>}
@@ -409,19 +426,19 @@ const AdminDocumentDetailsPage = () => {
               {file.Title}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Description: {file.Description}
+              {t.description}: {file.Description}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Source Language: {file.SourceLanguage}
+              {t.sourceLanguage}: {file.SourceLanguage}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Target Language: {file.TargetLanguage}
+              {t.targetLanguage}: {file.TargetLanguage}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Number of Pages: {file.NumberOfPages}
+              {t.numberOfPages}: {file.NumberOfPages}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Status: {file.Status}
+              {t.status}: {file.Status}
             </Typography>
             <Button
               variant="outlined"
@@ -429,7 +446,7 @@ const AdminDocumentDetailsPage = () => {
               onClick={() => router.push('/admin/documents')}
               sx={{ mt: 2 }}
             >
-              Back to Document List
+              {t.backToDocumentList}
             </Button>
             <Button
               variant="contained"
@@ -437,7 +454,7 @@ const AdminDocumentDetailsPage = () => {
               onClick={handleDownload}
               sx={{ mt: 2, ml: 2 }}
             >
-              Download Submitted Document
+              {t.downloadSubmittedDocument}
             </Button>
             {file.ApprovalStatus === '' && (
               <>
@@ -447,7 +464,7 @@ const AdminDocumentDetailsPage = () => {
                   onClick={handleApprove}
                   sx={{ mt: 2, ml: 2 }}
                 >
-                  Approve
+                  {t.approve}
                 </Button>
                 <Button
                   variant="contained"
@@ -455,7 +472,7 @@ const AdminDocumentDetailsPage = () => {
                   onClick={handleReject}
                   sx={{ mt: 2, ml: 2 }}
                 >
-                  Reject
+                  {t.reject}
                 </Button>
               </>
             )}
@@ -465,19 +482,18 @@ const AdminDocumentDetailsPage = () => {
               file.TranslatorApprovalStatus === 'Declined') && (
               <FormControl fullWidth sx={{ mt: 2 }}>
                 <InputLabel id="translator-select-label">
-                  Select Translator
+                  {t.selectTranslator}
                 </InputLabel>
                 <Select
                   labelId="translator-select-label"
                   id="translator-select"
                   value={selectedTranslator}
-                  label="Select Translator"
+                  label={t.selectTranslator}
                   onChange={(e) => setSelectedTranslator(e.target.value)}
                 >
                   {translators?.length === 0 ? (
                     <Alert severity="error" sx={{ mt: 2 }}>
-                      No translators found matching the source and target
-                      languages.
+                      {t.noTranslatorsFound}
                     </Alert>
                   ) : (
                     translators?.map((translator) => (
@@ -510,14 +526,13 @@ const AdminDocumentDetailsPage = () => {
                   onClick={handleAssign}
                   sx={{ mt: 2 }}
                 >
-                  Assign
+                  {t.assign}
                 </Button>
               </FormControl>
             )}
             {file.TranslatorApprovalStatus === 'Pending' && (
               <Alert severity="info" sx={{ mt: 2 }}>
-                This document has been assigned to a translator. Waiting for the
-                translator reponse.
+                {t.translatorAssigned}
               </Alert>
             )}
             {file.TranslatedFilePath && file.Status === 'Translating' && (
@@ -528,7 +543,7 @@ const AdminDocumentDetailsPage = () => {
                   onClick={handleDownloadTranslated}
                   sx={{ mt: 2 }}
                 >
-                  Download Translated Document
+                  {t.downloadTranslatedDocument}
                 </Button>
                 {file.TranslatedApprovalStatus === 'Pending' && (
                   <Box>
@@ -538,7 +553,7 @@ const AdminDocumentDetailsPage = () => {
                       onClick={handleApproveTranslated}
                       sx={{ mt: 2 }}
                     >
-                      Approve
+                      {t.approve}
                     </Button>
                     <Button
                       variant="contained"
@@ -546,7 +561,7 @@ const AdminDocumentDetailsPage = () => {
                       onClick={handleRejectTranslated}
                       sx={{ mt: 2, ml: 2 }}
                     >
-                      Reject
+                      {t.reject}
                     </Button>
                   </Box>
                 )}
@@ -555,8 +570,7 @@ const AdminDocumentDetailsPage = () => {
             {file.TranslatedApprovalStatus === 'Approved' &&
               file.PaymentReceiptContent === null && (
                 <Alert severity="info" sx={{ mt: 2 }}>
-                  This document has been translated. Waiting for payment from
-                  the user.
+                  {t.waitingForPayment}
                 </Alert>
               )}
             {file.Status === 'Finished' &&
@@ -567,7 +581,7 @@ const AdminDocumentDetailsPage = () => {
                   onClick={handleDownloadPaymentReceipt}
                   sx={{ mt: 2, ml: 2 }}
                 >
-                  Download Payment Receipt
+                  {t.downloadPaymentReceipt}
                 </Button>
               )}
             {!file.PaymentConfirmed &&
@@ -575,16 +589,16 @@ const AdminDocumentDetailsPage = () => {
               file.PaymentReceiptContent !== null && (
                 <Button
                   variant="contained"
-                  color="primary"
+                  color="success"
                   onClick={handleApprovePayment}
                   sx={{ mt: 2, ml: 2 }}
                 >
-                  Approve Payment
+                  {t.approvePayment}
                 </Button>
               )}
             {file.PaymentConfirmed && (
               <Alert severity="success" sx={{ mt: 2 }}>
-                Payment has been confirmed.
+                {t.paymentConfirmed}
               </Alert>
             )}
           </CardContent>
@@ -592,7 +606,7 @@ const AdminDocumentDetailsPage = () => {
 
         <Box sx={{ mt: 4 }}>
           <Typography variant="h5" gutterBottom>
-            Status Progress
+            {t.statusProgress}
           </Typography>
           <Stepper activeStep={activeStep}>
             {statuses.map((status, index) => (
@@ -605,7 +619,7 @@ const AdminDocumentDetailsPage = () => {
 
         <Box sx={{ mt: 4 }}>
           <Typography variant="h5" gutterBottom>
-            Discussion
+            {t.discussion}
           </Typography>
           {discussions.map((discussion) => (
             <Paper key={discussion.ID} sx={{ p: 2, mb: 2 }}>
@@ -619,7 +633,7 @@ const AdminDocumentDetailsPage = () => {
             <TextField
               fullWidth
               variant="outlined"
-              label="New Message"
+              label={t.newMessage}
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               sx={{
@@ -641,7 +655,7 @@ const AdminDocumentDetailsPage = () => {
               onClick={handlePostMessage}
               sx={{ ml: 2 }}
             >
-              Send
+              {t.send}
             </Button>
           </Box>
         </Box>

@@ -9,16 +9,29 @@ import {
   Typography,
   Card,
   CardContent,
-  Alert,
   TextField,
+  Paper,
   Stepper,
   Step,
   StepLabel,
-  Paper,
+  Alert,
 } from '@mui/material';
 import axios from 'axios';
+import { useLanguage } from '../../../contexts/LanguageContext';
+import { translatorDocumentDetailsPageTranslations } from '../../../translations/translatorDocumentDetailsPageTranslations';
 
-const statuses = ['Pending', 'Translating', 'Finished'];
+const getStatusIndex = (status: string) => {
+  switch (status.toLowerCase()) {
+    case 'pending':
+      return 0;
+    case 'translating':
+      return 1;
+    case 'finished':
+      return 2;
+    default:
+      return 0;
+  }
+};
 
 const TranslatorDocumentDetailsPage = () => {
   const { id } = useParams();
@@ -29,6 +42,10 @@ const TranslatorDocumentDetailsPage = () => {
   const router = useRouter();
   const [discussions, setDiscussions] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const { language } = useLanguage();
+  const t = translatorDocumentDetailsPageTranslations[language];
+
+  const statuses = [t.pending, t.translating, t.finished];
 
   useEffect(() => {
     const fetchDocument = async () => {
@@ -44,15 +61,15 @@ const TranslatorDocumentDetailsPage = () => {
         setFile(response.data);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          setError(`Error fetching document: ${error.response.data.error}`);
+          setError(`${t.errorFetchingDocument} ${error.response.data.error}`);
         } else {
-          setError('An unexpected error occurred while fetching the document');
+          setError(t.unexpectedErrorFetching);
         }
       }
     };
 
     fetchDocument();
-  }, [id]);
+  }, [id, t]);
 
   const handleDownloadDocument = async () => {
     try {
@@ -84,9 +101,9 @@ const TranslatorDocumentDetailsPage = () => {
       link.remove();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        setError(`Download error: ${error.response.statusText}`);
+        setError(`${t.downloadError} ${error.response.statusText}`);
       } else {
-        setError('An unexpected error occurred during the download');
+        setError(t.unexpectedErrorDownload);
       }
     }
   };
@@ -111,9 +128,9 @@ const TranslatorDocumentDetailsPage = () => {
       });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        setError(`Approval error: ${error.response.data.error}`);
+        setError(`${t.approvalError} ${error.response.data.error}`);
       } else {
-        setError('An unexpected error occurred during approval');
+        setError(t.unexpectedErrorApproval);
       }
     }
   };
@@ -134,9 +151,9 @@ const TranslatorDocumentDetailsPage = () => {
       setFile({ ...file, TranslatorApprovalStatus: 'Declined' });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        setError(`Decline error: ${error.response.data.error}`);
+        setError(`${t.declineError} ${error.response.data.error}`);
       } else {
-        setError('An unexpected error occurred during decline');
+        setError(t.unexpectedErrorDecline);
       }
     }
   };
@@ -148,7 +165,7 @@ const TranslatorDocumentDetailsPage = () => {
   const handleUploadTranslatedDocument = async (event) => {
     event.preventDefault();
     if (!translatedFile) {
-      setError('Please select a file to upload');
+      setError(t.selectFileToUpload);
       return;
     }
 
@@ -175,9 +192,9 @@ const TranslatorDocumentDetailsPage = () => {
       });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        setError(`Upload error: ${error.response.data.error}`);
+        setError(`${t.uploadError} ${error.response.data.error}`);
       } else {
-        setError('An unexpected error occurred during the upload');
+        setError(t.unexpectedErrorUpload);
       }
     }
   };
@@ -203,7 +220,7 @@ const TranslatorDocumentDetailsPage = () => {
       if (axios.isAxiosError(error) && error.response) {
         setError(error.response.data.error);
       } else {
-        setError('An unexpected error occurred');
+        setError(t.unexpectedError);
       }
     }
   };
@@ -213,17 +230,17 @@ const TranslatorDocumentDetailsPage = () => {
       <Container maxWidth="md">
         <Box sx={{ mt: 4 }}>
           <Typography variant="h4" gutterBottom>
-            Document Details
+            {t.pageTitle}
           </Typography>
           {error && <Alert severity="error">{error}</Alert>}
-          <Typography>Loading...</Typography>
+          <Typography>{t.loading}</Typography>
         </Box>
       </Container>
     );
   }
 
-  var activeStep = statuses.indexOf(file.Status);
-  if (file.Status === 'Finished') {
+  var activeStep = getStatusIndex(file.Status);
+  if (getStatusIndex(file.Status) === 2) {
     activeStep = 3;
   }
 
@@ -231,7 +248,7 @@ const TranslatorDocumentDetailsPage = () => {
     <Container maxWidth="md">
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4" gutterBottom>
-          Document Details
+          {t.pageTitle}
         </Typography>
         {error && <Alert severity="error">{error}</Alert>}
         {success && <Alert severity="success">{success}</Alert>}
@@ -241,19 +258,19 @@ const TranslatorDocumentDetailsPage = () => {
               {file.Title}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Description: {file.Description}
+              {t.description}: {file.Description}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Source Language: {file.SourceLanguage}
+              {t.sourceLanguage}: {file.SourceLanguage}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Target Language: {file.TargetLanguage}
+              {t.targetLanguage}: {file.TargetLanguage}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Number of Pages: {file.NumberOfPages}
+              {t.numberOfPages}: {file.NumberOfPages}
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              Status: {file.Status}
+              {t.status}: {file.Status}
             </Typography>
             <Button
               variant="outlined"
@@ -261,7 +278,7 @@ const TranslatorDocumentDetailsPage = () => {
               onClick={() => router.push('/translators/documents')}
               sx={{ mt: 2 }}
             >
-              Back to Documents
+              {t.backToDocuments}
             </Button>
             <Button
               variant="contained"
@@ -269,7 +286,7 @@ const TranslatorDocumentDetailsPage = () => {
               onClick={handleDownloadDocument}
               sx={{ mt: 2, ml: 2 }}
             >
-              Download Document
+              {t.downloadDocument}
             </Button>
             {file.TranslatorApprovalStatus == 'Pending' && (
               <>
@@ -279,7 +296,7 @@ const TranslatorDocumentDetailsPage = () => {
                   onClick={handleApproveDocument}
                   sx={{ mt: 2, ml: 2 }}
                 >
-                  Accept
+                  {t.accept}
                 </Button>
                 <Button
                   variant="contained"
@@ -287,7 +304,7 @@ const TranslatorDocumentDetailsPage = () => {
                   onClick={handleDeclineDocument}
                   sx={{ mt: 2, ml: 2 }}
                 >
-                  Decline
+                  {t.decline}
                 </Button>
               </>
             )}
@@ -299,7 +316,7 @@ const TranslatorDocumentDetailsPage = () => {
                   style={{ marginTop: '16px' }}
                 >
                   {file.TranslatedApprovalStatus === 'Rejected' && (
-                    <Alert severity="error">Rejected by Admin</Alert>
+                    <Alert severity="error">{t.rejectedByAdmin}</Alert>
                   )}
                   <TextField
                     type="file"
@@ -314,18 +331,18 @@ const TranslatorDocumentDetailsPage = () => {
                     color="primary"
                     sx={{ mt: 2 }}
                   >
-                    Submit
+                    {t.submit}
                   </Button>
                 </form>
               )}
             {file.TranslatedApprovalStatus === 'Pending' && (
               <Alert severity="info" sx={{ mt: 2 }}>
-                Translated document uploaded. Waiting for admin review.
+                {t.waitingForAdminReview}
               </Alert>
             )}
             {file.TranslatedApprovalStatus === 'Approved' && (
               <Alert severity="success" sx={{ mt: 2 }}>
-                Translated document uploaded. Approved by Admin.
+                {t.approvedByAdmin}
               </Alert>
             )}
           </CardContent>
@@ -334,7 +351,7 @@ const TranslatorDocumentDetailsPage = () => {
 
       <Box sx={{ mt: 4 }}>
         <Typography variant="h5" gutterBottom>
-          Status Progress
+          {t.statusProgress}
         </Typography>
         <Stepper activeStep={activeStep}>
           {statuses.map((status, index) => (
@@ -347,7 +364,7 @@ const TranslatorDocumentDetailsPage = () => {
 
       <Box sx={{ mt: 4 }}>
         <Typography variant="h5" gutterBottom>
-          Discussion
+          {t.discussion}
         </Typography>
         {discussions.map((discussion) => (
           <Paper key={discussion.ID} sx={{ p: 2, mb: 2 }}>

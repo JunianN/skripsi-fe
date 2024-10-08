@@ -22,6 +22,8 @@ import {
 import Link from 'next/link';
 import axios from 'axios';
 import { isAuthenticated } from '@/utils/auth';
+import { useLanguage } from '../contexts/LanguageContext';
+import { registerPageTranslations } from '../translations/registerPageTranslations';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -46,28 +48,25 @@ const RegisterPage = () => {
   const [username, setUsername] = useState('');
   const [role, setRole] = useState('user');
   const [proficientLanguages, setProficientLanguages] = useState<string[]>([]);
-  const [languages, setLanguages] = useState<Language[]>([]);
   const [error, setError] = useState('');
   const router = useRouter();
+  const { language } = useLanguage();
+  const t = registerPageTranslations[language];
+
+  const languages: Language[] = [
+    { code: 'id', name: 'Indonesian' },
+    { code: 'en', name: 'English' },
+    { code: 'fr', name: 'French' },
+    { code: 'es', name: 'Spanish' },
+    { code: 'ru', name: 'Russian' },
+    { code: 'ar', name: 'Arabic' },
+    { code: 'zh', name: 'Chinese' },
+    { code: 'hi', name: 'Hindi' },
+    { code: 'pt', name: 'Portuguese' },
+    { code: 'it', name: 'Italian' },
+  ];
 
   useEffect(() => {
-    const fetchLanguages = async () => {
-      try {
-        const response = await axios.get(
-          'https://libretranslate.com/languages'
-        );
-        setLanguages(response.data);
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          setError(`Error fetching languages: ${error.response.data.error}`);
-        } else {
-          setError('Error fetching languages');
-        }
-      }
-    };
-
-    fetchLanguages();
-
     if (isAuthenticated()) {
       router.push('/');
     }
@@ -77,14 +76,13 @@ const RegisterPage = () => {
     event.preventDefault();
     setError('');
 
-    // Validate the inputs
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(t.passwordsDoNotMatch);
       return;
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         'https://doc-translation-api.onrender.com/api/register',
         {
           username,
@@ -96,13 +94,12 @@ const RegisterPage = () => {
         }
       );
 
-      // Redirect to login page
       router.push('/login');
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         setError(error.response.data.error);
       } else {
-        setError('An unexpected error occured');
+        setError(t.unexpectedError);
       }
     }
   };
@@ -129,7 +126,7 @@ const RegisterPage = () => {
         }}
       >
         <Typography component="h1" variant="h5">
-          Sign Up
+          {t.signUp}
         </Typography>
         <Box
           component="form"
@@ -143,7 +140,7 @@ const RegisterPage = () => {
             required
             fullWidth
             id="username"
-            label="Username"
+            label={t.username}
             name="username"
             autoComplete="username"
             autoFocus
@@ -156,7 +153,7 @@ const RegisterPage = () => {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={t.emailAddress}
             name="email"
             autoComplete="email"
             value={email}
@@ -168,7 +165,7 @@ const RegisterPage = () => {
             required
             fullWidth
             name="password"
-            label="Password"
+            label={t.password}
             type="password"
             id="password"
             autoComplete="new-password"
@@ -181,7 +178,7 @@ const RegisterPage = () => {
             required
             fullWidth
             name="confirmPassword"
-            label="Confirm Password"
+            label={t.confirmPassword}
             type="password"
             id="confirmPassword"
             value={confirmPassword}
@@ -189,19 +186,19 @@ const RegisterPage = () => {
           />
           <TextField
             select
-            label="Role"
+            label={t.role}
             fullWidth
             value={role}
             onChange={(e) => setRole(e.target.value)}
             margin="normal"
           >
-            <MenuItem value="user">User</MenuItem>
-            <MenuItem value="translator">Translator</MenuItem>
+            <MenuItem value="user">{t.user}</MenuItem>
+            <MenuItem value="translator">{t.translator}</MenuItem>
           </TextField>
           {role === 'translator' && (
             <FormControl sx={{ mt: 1, width: 400 }}>
               <InputLabel id="proficient-languages-label">
-                Proficient Languages
+                {t.proficientLanguages}
               </InputLabel>
               <Select
                 labelId="proficient-languages-label"
@@ -209,7 +206,7 @@ const RegisterPage = () => {
                 multiple
                 value={proficientLanguages}
                 onChange={handleLanguageChange}
-                input={<OutlinedInput label="Proficient Languages" />}
+                input={<OutlinedInput label={t.proficientLanguages} />}
                 renderValue={(selected) => selected?.join(',')}
                 MenuProps={MenuProps}
                 fullWidth
@@ -232,12 +229,10 @@ const RegisterPage = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign Up
+            {t.signUpButton}
           </Button>
           <Link href="/login" passHref>
-            <MuiLink variant="body2">
-              {'Already have an account? Sign in'}
-            </MuiLink>
+            <MuiLink variant="body2">{t.alreadyHaveAccount}</MuiLink>
           </Link>
         </Box>
       </Box>

@@ -15,6 +15,8 @@ import Link from 'next/link';
 import axios from 'axios';
 import { isAuthenticated } from '@/utils/auth';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
+import { loginPageTranslations } from '../translations/loginPageTranslations';
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -22,6 +24,8 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
+  const { language } = useLanguage();
+  const t = loginPageTranslations[language];
 
   useEffect(() => {
     if (isAuthenticated()) {
@@ -56,7 +60,7 @@ const LoginPage = () => {
       if (axios.isAxiosError(error) && error.response) {
         setError(error.response.data.error);
       } else {
-        setError('An unexpected error occurred');
+        setError(t.unexpectedError);
       }
     }
   };
@@ -72,7 +76,7 @@ const LoginPage = () => {
         }}
       >
         <Typography component="h1" variant="h5">
-          Sign in
+          {t.signIn}
         </Typography>
         <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 1 }}>
           <TextField
@@ -81,7 +85,7 @@ const LoginPage = () => {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={t.emailAddress}
             name="email"
             autoComplete="email"
             autoFocus
@@ -94,7 +98,7 @@ const LoginPage = () => {
             required
             fullWidth
             name="password"
-            label="Password"
+            label={t.password}
             type="password"
             id="password"
             autoComplete="current-password"
@@ -108,12 +112,10 @@ const LoginPage = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            {t.signInButton}
           </Button>
           <Link href="/register" passHref>
-            <MuiLink variant="body2">
-              {"Don't have an account? Sign Up"}
-            </MuiLink>
+            <MuiLink variant="body2">{t.dontHaveAccount}</MuiLink>
           </Link>
         </Box>
       </Box>

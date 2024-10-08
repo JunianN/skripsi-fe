@@ -13,11 +13,15 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { assignedDocumentsPageTranslations } from '../../translations/assignedDocumentsPageTranslations';
 
 const AssignedDocumentsPage = () => {
   const [files, setFiles] = useState([]);
   const [error, setError] = useState('');
   const router = useRouter();
+  const { language } = useLanguage();
+  const t = assignedDocumentsPageTranslations[language];
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -33,15 +37,15 @@ const AssignedDocumentsPage = () => {
         setFiles(response.data);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          setError(`Error fetching documents: ${error.response.data.error}`);
+          setError(`${t.errorFetchingDocuments} ${error.response.data.error}`);
         } else {
-          setError('An unexpected error occurred while fetching the documents');
+          setError(t.unexpectedError);
         }
       }
     };
 
     fetchDocuments();
-  }, []);
+  }, [t]);
 
   const renderDocuments = (status) => {
     return files
@@ -71,19 +75,19 @@ const AssignedDocumentsPage = () => {
                   textOverflow: 'ellipsis',
                 }}
               >
-                Description: {doc.Description}
+                {t.description}: {doc.Description}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Source Language: {doc.SourceLanguage}
+                {t.sourceLanguage}: {doc.SourceLanguage}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Target Language: {doc.TargetLanguage}
+                {t.targetLanguage}: {doc.TargetLanguage}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Number of Pages: {doc.NumberOfPages}
+                {t.numberOfPages}: {doc.NumberOfPages}
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Status: {doc.Status}
+                {t.status}: {doc.Status}
               </Typography>
               <Button
                 variant="contained"
@@ -91,7 +95,7 @@ const AssignedDocumentsPage = () => {
                 onClick={() => router.push(`documents/${doc.ID}`)}
                 sx={{ mt: 2 }}
               >
-                View Details
+                {t.viewDetails}
               </Button>
             </CardContent>
           </Card>
@@ -103,18 +107,18 @@ const AssignedDocumentsPage = () => {
     <Container maxWidth="lg">
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4" gutterBottom>
-          Assigned Documents
+          {t.pageTitle}
         </Typography>
         {error && <Alert severity="error">{error}</Alert>}
         {files.length === 0 ? (
-          <Typography>No documents assigned to you.</Typography>
+          <Typography>{t.noDocuments}</Typography>
         ) : (
           <>
             <Typography variant="h5" gutterBottom>
-              Pending
+              {t.pending}
             </Typography>
             {renderDocuments('Pending').length === 0 ? (
-              <Alert severity="info">No document</Alert>
+              <Alert severity="info">{t.noDocument}</Alert>
             ) : (
               <>
                 <Grid container spacing={2}>
@@ -123,10 +127,10 @@ const AssignedDocumentsPage = () => {
               </>
             )}
             <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
-              Translating
+              {t.translating}
             </Typography>
             {renderDocuments('Translating').length === 0 ? (
-              <Alert severity="info">No document</Alert>
+              <Alert severity="info">{t.noDocument}</Alert>
             ) : (
               <>
                 <Grid container spacing={2}>
@@ -135,10 +139,10 @@ const AssignedDocumentsPage = () => {
               </>
             )}
             <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
-              Finished
+              {t.finished}
             </Typography>
             {renderDocuments('Finished').length === 0 ? (
-              <Alert severity="info">No document</Alert>
+              <Alert severity="info">{t.noDocument}</Alert>
             ) : (
               <>
                 <Grid container spacing={2}>

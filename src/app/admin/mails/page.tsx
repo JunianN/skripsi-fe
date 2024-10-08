@@ -11,10 +11,14 @@ import {
   Alert,
 } from '@mui/material';
 import axios from 'axios';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { adminContactSubmissionsPageTranslations } from '../../translations/adminContactSubmissionsPageTranslations';
 
 const AdminContactSubmissionsPage = () => {
   const [contacts, setContacts] = useState([]);
   const [error, setError] = useState('');
+  const { language } = useLanguage();
+  const t = adminContactSubmissionsPageTranslations[language];
 
   useEffect(() => {
     const fetchContacts = async () => {
@@ -31,24 +35,22 @@ const AdminContactSubmissionsPage = () => {
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           setError(
-            `Error fetching contact submissions: ${error.response.data.error}`
+            `${t.errorFetchingSubmissions} ${error.response.data.error}`
           );
         } else {
-          setError(
-            'An unexpected error occurred while fetching the contact submissions'
-          );
+          setError(t.unexpectedError);
         }
       }
     };
 
     fetchContacts();
-  }, []);
+  }, [t]);
 
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 6 }}>
         <Typography variant="h2" gutterBottom textAlign="center">
-          Contact Form Submissions
+          {t.pageTitle}
         </Typography>
         {error && <Alert severity="error">{error}</Alert>}
         <Grid container spacing={4}>
@@ -60,10 +62,10 @@ const AdminContactSubmissionsPage = () => {
                     {contact.Name}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    Email: {contact.Email}
+                    {t.email}: {contact.Email}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    Message: {contact.Message}
+                    {t.message}: {contact.Message}
                   </Typography>
                 </CardContent>
               </Card>

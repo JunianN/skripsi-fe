@@ -23,7 +23,10 @@ import Badge from '@mui/material/Badge';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import styles from './Navbar.module.css';
+import LanguageIcon from '@mui/icons-material/Language';
+import { navbarTranslations } from '../translations/navbarTranslations';
 
 const Navbar = () => {
   const router = useRouter();
@@ -38,6 +41,9 @@ const Navbar = () => {
     null
   );
   const [error, setError] = useState('');
+  const { language, toggleLanguage } = useLanguage();
+  const t = navbarTranslations[language];
+
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -134,6 +140,10 @@ const Navbar = () => {
     router.push('/login');
   };
 
+  const handleLanguageToggle = () => {
+    toggleLanguage();
+  };
+
   return (
     <AppBar position="static">
       <Toolbar className={styles.navbar}>
@@ -143,7 +153,7 @@ const Navbar = () => {
         {isLoggedIn && (
           <div className={styles.navLinks}>
             <Button color="inherit" onClick={() => handleNavigation('/')}>
-              Home
+              {t.home}
             </Button>
             <Button
               color="inherit"
@@ -157,26 +167,36 @@ const Navbar = () => {
                 )
               }
             >
-              Documents
+              {t.documents}
             </Button>
             <Button color="inherit" onClick={() => handleNavigation('/about')}>
-              About
+              {t.about}
             </Button>
             {payload?.userRole === 'admin' ? (
               <Button
                 color="inherit"
                 onClick={() => handleNavigation('/admin/mails')}
               >
-                Mails
+                {t.mails}
               </Button>
             ) : (
               <Button
                 color="inherit"
                 onClick={() => handleNavigation('/contact')}
               >
-                Contact
+                {t.contact}
               </Button>
             )}
+            <IconButton
+              color="inherit"
+              onClick={handleLanguageToggle}
+              sx={{ ml: 1 }}
+            >
+              <LanguageIcon />
+              <Typography variant="body2" sx={{ ml: 0.5 }}>
+                {language === 'en' ? 'EN' : 'ID'}
+              </Typography>
+            </IconButton>
             <Button
               id="notif-button"
               aria-controls={open ? 'notif-menu' : undefined}
@@ -201,19 +221,18 @@ const Navbar = () => {
             >
               <List>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  {/* <Typography sx={{ mr: 3, cursor:'pointer', ':hover': { textDecoration:'underline'} }} variant='subtitle1' >Mark all as read</Typography> */}
                   <Button
                     variant="text"
                     size="small"
                     sx={{ mr: 2 }}
                     onClick={handleMarkAsRead}
                   >
-                    Mark all as read
+                    {t.markAllAsRead}
                   </Button>
                 </Box>
                 <Divider variant="middle" />
                 {notifications.length === 0 && (
-                  <Alert severity="info">No notifications</Alert>
+                  <Alert severity="info">{t.noNotifications}</Alert>
                 )}
                 {notifications.length > 0 &&
                   notifications?.map((notif) => (
@@ -272,18 +291,31 @@ const Navbar = () => {
               <MenuItem onClick={handleProfileMenuClose}>
                 {payload?.username}
               </MenuItem>
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              <MenuItem onClick={handleLogout}>{t.logout}</MenuItem>
             </Menu>
           </>
         ) : (
           <>
+            <Button color="inherit" onClick={() => handleNavigation('/about')}>
+              {t.aboutUs}
+            </Button>
             <Button
               sx={{ mx: 1 }}
               color="inherit"
               onClick={() => handleNavigation('/contact')}
             >
-              Contact Us
+              {t.contactUs}
             </Button>
+            <IconButton
+              color="inherit"
+              onClick={handleLanguageToggle}
+              sx={{ ml: 1 }}
+            >
+              <LanguageIcon />
+              <Typography variant="body2" sx={{ ml: 0.5 }}>
+                {language === 'en' ? 'EN' : 'ID'}
+              </Typography>
+            </IconButton>
             <Button
               variant="outlined"
               color="inherit"
@@ -296,7 +328,7 @@ const Navbar = () => {
               }}
               onClick={() => handleNavigation('/login')}
             >
-              Login
+              {t.login}
             </Button>
             <Button
               variant="outlined"
@@ -309,7 +341,7 @@ const Navbar = () => {
               }}
               onClick={() => handleNavigation('/register')}
             >
-              Register
+              {t.register}
             </Button>
           </>
         )}
@@ -327,13 +359,15 @@ const Navbar = () => {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem onClick={() => handleNavigation('/')}>Home</MenuItem>
-          <MenuItem onClick={() => handleNavigation('/about')}>About</MenuItem>
+          <MenuItem onClick={() => handleNavigation('/')}>{t.home}</MenuItem>
+          <MenuItem onClick={() => handleNavigation('/about')}>
+            {t.about}
+          </MenuItem>
           <MenuItem onClick={() => handleNavigation('/contact')}>
-            Contact
+            {t.contact}
           </MenuItem>
           <MenuItem onClick={() => handleNavigation('/dashboard')}>
-            Dashboard
+            {t.dashboard}
           </MenuItem>
         </Menu>
       </Toolbar>
