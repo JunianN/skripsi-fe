@@ -54,16 +54,16 @@ const RegisterPage = () => {
   const t = registerPageTranslations[language];
 
   const languages: Language[] = [
-    { code: 'id', name: 'Indonesian' },
-    { code: 'en', name: 'English' },
-    { code: 'fr', name: 'French' },
-    { code: 'es', name: 'Spanish' },
-    { code: 'ru', name: 'Russian' },
-    { code: 'ar', name: 'Arabic' },
-    { code: 'zh', name: 'Chinese' },
-    { code: 'hi', name: 'Hindi' },
-    { code: 'pt', name: 'Portuguese' },
-    { code: 'it', name: 'Italian' },
+    { code: 'id', name: t.indonesian },
+    { code: 'en', name: t.english },
+    { code: 'fr', name: t.french },
+    { code: 'es', name: t.spanish },
+    { code: 'ru', name: t.russian },
+    { code: 'ar', name: t.arabic },
+    { code: 'zh', name: t.chinese },
+    { code: 'hi', name: t.hindi },
+    { code: 'pt', name: t.portuguese },
+    { code: 'it', name: t.italian },
   ];
 
   useEffect(() => {

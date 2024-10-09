@@ -16,6 +16,16 @@ export const submitTranslationPageTranslations = {
     failedSubmission:
       'Failed to submit the translation request. Please try again.',
     currency: 'en-US',
+    indonesian: 'Indonesian',
+    english: 'English',
+    french: 'French',
+    spanish: 'Spanish',
+    russian: 'Russian',
+    arabic: 'Arabic',
+    chinese: 'Chinese',
+    hindi: 'Hindi',
+    portuguese: 'Portuguese',
+    italian: 'Italian',
   },
   id: {
     pageTitle: 'Ajukan Permintaan Terjemahan',
@@ -34,5 +44,15 @@ export const submitTranslationPageTranslations = {
     failedSubmission:
       'Gagal mengirim permintaan terjemahan. Silakan coba lagi.',
     currency: 'id-ID',
+    indonesian: 'Indonesia',
+    english: 'Inggris',
+    french: 'Prancis',
+    spanish: 'Spanyol',
+    russian: 'Rusia',
+    arabic: 'Arab',
+    chinese: 'China',
+    hindi: 'Hindi',
+    portuguese: 'Portugis',
+    italian: 'Italia',
   },
 };
