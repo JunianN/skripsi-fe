@@ -23,6 +23,12 @@ const SubmitRating = ({ translatorId, documentId }) => {
     event.preventDefault();
 
     try {
+      if (rating === 0) {
+        setError('Please rate the translator');
+        setSuccess('');
+        return;
+      }
+
       const response = await axios.post(
         'https://doc-translation-api.onrender.com/api/ratings',
         {

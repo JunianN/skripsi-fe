@@ -141,6 +141,7 @@ const DocumentDetailsPage = () => {
 
   const handlePostMessage = async () => {
     if (!newMessage.trim()) {
+      setError('Please fill in the message');
       return;
     }
 
