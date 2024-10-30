@@ -21,7 +21,6 @@ const LandingPage = () => {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
   const { language } = useLanguage();
-  console.log('Current language:', language);
 
   if (!language || !landingPageTranslations[language]) {
     console.error('Invalid language or translations not found');
