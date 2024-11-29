@@ -12,19 +12,23 @@ import {
   Rating as MuiRating,
 } from '@mui/material';
 import axios from 'axios';
+import { useLanguage } from '../contexts/LanguageContext';
+import { submitRatingTranslations } from '../translations/submitRatingTranslations';
 
 const SubmitRating = ({ translatorId, documentId }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const { language } = useLanguage();
+  const t = submitRatingTranslations[language];
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
       if (rating === 0) {
-        setError('Please rate the translator');
+        setError(t.rateTranslator);
         setSuccess('');
         return;
       }
@@ -44,10 +48,10 @@ const SubmitRating = ({ translatorId, documentId }) => {
         }
       );
 
-      setSuccess('Rating submitted successfully');
+      setSuccess(t.successMessage);
       setError('');
     } catch (error) {
-      setError('Failed to submit rating. Please try again.');
+      setError(t.failedSubmission);
       setSuccess('');
     }
   };
@@ -55,7 +59,7 @@ const SubmitRating = ({ translatorId, documentId }) => {
   return (
     <Box sx={{ mt: 4 }}>
       <Typography variant="h4" gutterBottom>
-        Submit Rating
+        {t.pageTitle}
       </Typography>
       {success && <Alert severity="success">{success}</Alert>}
       {error && <Alert severity="error">{error}</Alert>}
@@ -66,7 +70,7 @@ const SubmitRating = ({ translatorId, documentId }) => {
           onChange={(event, newValue) => setRating(newValue)}
         />
         <TextField
-          label="Comment"
+          label={t.comment}
           fullWidth
           value={comment}
           onChange={(e) => setComment(e.target.value)}
@@ -81,7 +85,7 @@ const SubmitRating = ({ translatorId, documentId }) => {
           fullWidth
           sx={{ mt: 2 }}
         >
-          Submit Rating
+          {t.submitRating}
         </Button>
       </form>
     </Box>

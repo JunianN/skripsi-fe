@@ -56,8 +56,20 @@ const AdminContactSubmissionsPage = () => {
         <Grid container spacing={4}>
           {contacts.map((contact) => (
             <Grid item xs={12} md={4} key={contact.ID}>
-              <Card>
-                <CardContent>
+              <Card sx={{ height: '200px' }}>
+                <CardContent
+                  sx={{
+                    height: '100%',
+                    overflow: 'auto',
+                    '&::-webkit-scrollbar': {
+                      width: '8px',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      backgroundColor: '#888',
+                      borderRadius: '4px',
+                    },
+                  }}
+                >
                   <Typography variant="h6" gutterBottom>
                     {contact.Name}
                   </Typography>

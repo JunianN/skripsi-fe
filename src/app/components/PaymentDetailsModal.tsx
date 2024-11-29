@@ -12,6 +12,8 @@ import {
   Alert,
 } from '@mui/material';
 import axios from 'axios';
+import { useLanguage } from '../contexts/LanguageContext';
+import { paymentDetailsModalTranslations } from '../translations/paymentDetailsModalTranslations';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -29,6 +31,8 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [receiptUploaded, setReceiptUploaded] = useState(false);
+  const { language } = useLanguage();
+  const t = paymentDetailsModalTranslations[language];
 
   useEffect(() => {
     const fetchDocument = async () => {
@@ -46,9 +50,9 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
         }
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          setError(`Error fetching document: ${error.response.data.error}`);
+          setError(`${t.uploadError} ${error.response.data.error}`);
         } else {
-          setError('An unexpected error occurred while fetching the document');
+          setError(t.unexpectedError);
         }
       }
     };
@@ -56,7 +60,7 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
     if (open) {
       fetchDocument();
     }
-  }, [documentId, open]);
+  }, [documentId, open, t]);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -66,7 +70,7 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
     event.preventDefault();
 
     if (!selectedFile) {
-      setError('Please select a file to upload');
+      setError(t.selectFile);
       return;
     }
 
@@ -88,19 +92,22 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
       setReceiptUploaded(true);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        setError(`Error uploading receipt: ${error.response.data.error}`);
+        setError(`${t.uploadError} ${error.response.data.error}`);
       } else {
-        setError('An unexpected error occurred while uploading the receipt');
+        setError(t.unexpectedError);
       }
       setSuccess('');
     }
   };
 
   function formatCurrency(value) {
-    const formatter = new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-    });
+    const formatter = new Intl.NumberFormat(
+      language === 'en' ? 'en-US' : 'id-ID',
+      {
+        style: 'currency',
+        currency: 'IDR',
+      }
+    );
 
     const numericValue = parseFloat(value);
 
@@ -120,17 +127,16 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
           variant="h6"
           component="h2"
         >
-          Payment Details
+          {t.paymentDetails}
         </Typography>
         <Typography id="payment-details-modal-description" sx={{ mt: 2 }}>
-          Please transfer the amount to the following account number and upload
-          the payment receipt.
+          {t.transferInstructions}
         </Typography>
         <Typography variant="body1" sx={{ mt: 2 }}>
-          Account Number: 123456789
+          {t.accountNumber}: 123456789
         </Typography>
         <Typography variant="body1" sx={{ mt: 2 }}>
-          Amount: {formatCurrency(totalPrice)}
+          {t.amount}: {formatCurrency(totalPrice)}
         </Typography>
         {error && (
           <Alert severity="error" sx={{ mt: 2 }}>
@@ -144,8 +150,7 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
         )}
         {receiptUploaded ? (
           <Alert severity="success" sx={{ mt: 2 }}>
-            Payment receipt has been uploaded. Waiting for confirmation from the
-            admin.
+            {t.receiptUploaded}
           </Alert>
         ) : (
           <Card sx={{ mt: 2 }}>
@@ -158,7 +163,7 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
                   color="primary"
                   sx={{ mt: 2 }}
                 >
-                  Upload Receipt
+                  {t.uploadReceipt}
                 </Button>
               </form>
             </CardContent>
@@ -170,7 +175,7 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
           color="secondary"
           sx={{ mt: 2 }}
         >
-          Close
+          {t.close}
         </Button>
       </Box>
     </Modal>

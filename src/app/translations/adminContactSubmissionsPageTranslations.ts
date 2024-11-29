@@ -6,7 +6,10 @@ export const adminContactSubmissionsPageTranslations = {
     errorFetchingSubmissions: 'Error fetching contact submissions:',
     unexpectedError:
       'An unexpected error occurred while fetching the contact submissions',
+    readMore: 'Read More',
+    readLess: 'Read Less',
   },
+
   id: {
     pageTitle: 'Pesan Formulir Kontak',
     email: 'Email',
@@ -14,5 +17,7 @@ export const adminContactSubmissionsPageTranslations = {
     errorFetchingSubmissions: 'Kesalahan saat mengambil pengajuan kontak:',
     unexpectedError:
       'Terjadi kesalahan yang tidak terduga saat mengambil pengajuan kontak',
+    readMore: 'Lebih Banyak',
+    readLess: 'Lebih Sedikit',
   },
 };
