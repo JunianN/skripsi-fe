@@ -41,6 +41,7 @@ export const adminDocumentDetailsPageTranslations = {
     finished: 'Finished',
     backToDocumentList: 'Back to Document List',
     downloadSubmittedDocument: 'Download Submitted Document',
+    client: 'Client',
   },
   id: {
     pageTitle: 'Detail Dokumen',
@@ -84,5 +85,6 @@ export const adminDocumentDetailsPageTranslations = {
     finished: 'Selesai',
     backToDocumentList: 'Kembali ke Daftar Dokumen',
     downloadSubmittedDocument: 'Unduh Dokumen Klien',
+    client: 'Klien',
   },
 };

@@ -83,15 +83,16 @@ const TranslatorDocumentDetailsPage = () => {
         }
       );
 
-      const contentDisposition = response.headers['content-disposition'];
-      let filename = 'document';
-      if (contentDisposition) {
-        const match = contentDisposition.match(/filename="(.+)"/);
-        if (match && match.length === 2) {
-          filename = match[1];
-        }
-      }
-
+      // const contentDisposition = response.headers['content-disposition'];
+      // let filename = 'document';
+      // if (contentDisposition) {
+      //   const match = contentDisposition.match(/filename="(.+)"/);
+      //   if (match && match.length === 2) {
+      //     filename = match[1];
+      //   }
+      // }
+      const filename =
+        response.headers['content-disposition'].split('filename=')[1];
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -272,42 +273,46 @@ const TranslatorDocumentDetailsPage = () => {
             <Typography variant="body2" color="textSecondary">
               {t.status}: {file.Status}
             </Typography>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => router.push('/translators/documents')}
-              sx={{ mt: 2 }}
-            >
-              {t.backToDocuments}
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleDownloadDocument}
-              sx={{ mt: 2, ml: 2 }}
-            >
-              {t.downloadDocument}
-            </Button>
-            {file.TranslatorApprovalStatus == 'Pending' && (
-              <>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div>
                 <Button
-                  variant="contained"
-                  color="success"
-                  onClick={handleApproveDocument}
-                  sx={{ mt: 2, ml: 2 }}
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => router.push('/translators/documents')}
+                  sx={{ mt: 2 }}
                 >
-                  {t.accept}
+                  {t.backToDocuments}
                 </Button>
                 <Button
                   variant="contained"
-                  color="error"
-                  onClick={handleDeclineDocument}
+                  color="secondary"
+                  onClick={handleDownloadDocument}
                   sx={{ mt: 2, ml: 2 }}
                 >
-                  {t.decline}
+                  {t.downloadDocument}
                 </Button>
-              </>
-            )}
+              </div>
+              {file.TranslatorApprovalStatus == 'Pending' && (
+                <div>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleApproveDocument}
+                    sx={{ mt: 2, ml: 2 }}
+                  >
+                    {t.accept}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleDeclineDocument}
+                    sx={{ mt: 2, ml: 2 }}
+                  >
+                    {t.decline}
+                  </Button>
+                </div>
+              )}
+            </div>
             {file.TranslatorApprovalStatus === 'Accepted' &&
               (file.TranslatedApprovalStatus === '' ||
                 file.TranslatedApprovalStatus === 'Rejected') && (

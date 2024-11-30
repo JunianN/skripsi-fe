@@ -135,11 +135,12 @@ const AdminDocumentDetailsPage = () => {
         }
       );
 
+      const filename =
+        response.headers['content-disposition'].split('filename=')[1];
       const url = window.URL.createObjectURL(new Blob([response.data]));
-
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'submitted_document.pdf'); // Specify the filename
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -269,11 +270,12 @@ const AdminDocumentDetailsPage = () => {
         }
       );
 
+      const filename =
+        response.headers['content-disposition'].split('filename=')[1];
       const url = window.URL.createObjectURL(new Blob([response.data]));
-
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'translated_document.pdf'); // Specify the filename
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -440,42 +442,46 @@ const AdminDocumentDetailsPage = () => {
             <Typography variant="body2" color="textSecondary">
               {t.status}: {file.Status}
             </Typography>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => router.push('/admin/documents')}
-              sx={{ mt: 2 }}
-            >
-              {t.backToDocumentList}
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleDownload}
-              sx={{ mt: 2, ml: 2 }}
-            >
-              {t.downloadSubmittedDocument}
-            </Button>
-            {file.ApprovalStatus === '' && (
-              <>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div>
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   color="primary"
-                  onClick={handleApprove}
-                  sx={{ mt: 2, ml: 2 }}
+                  onClick={() => router.push('/admin/documents')}
+                  sx={{ mt: 2 }}
                 >
-                  {t.approve}
+                  {t.backToDocumentList}
                 </Button>
                 <Button
                   variant="contained"
-                  color="error"
-                  onClick={handleReject}
+                  color="secondary"
+                  onClick={handleDownload}
                   sx={{ mt: 2, ml: 2 }}
                 >
-                  {t.reject}
+                  {t.downloadSubmittedDocument}
                 </Button>
-              </>
-            )}
+              </div>
+              {file.ApprovalStatus === '' && (
+                <div>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleApprove}
+                    sx={{ mt: 2, ml: 2 }}
+                  >
+                    {t.approve}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleReject}
+                    sx={{ mt: 2, ml: 2 }}
+                  >
+                    {t.reject}
+                  </Button>
+                </div>
+              )}
+            </div>
             {((file.ApprovalStatus === 'Approved' &&
               file.Status === 'Pending' &&
               file.TranslatorApprovalStatus === '') ||
@@ -535,7 +541,7 @@ const AdminDocumentDetailsPage = () => {
                 {t.translatorAssigned}
               </Alert>
             )}
-            {file.TranslatedFilePath && file.Status === 'Translating' && (
+            {file.TranslatedFileContent && file.Status === 'Translating' && (
               <>
                 <Button
                   variant="contained"
@@ -573,17 +579,19 @@ const AdminDocumentDetailsPage = () => {
                   {t.waitingForPayment}
                 </Alert>
               )}
-            {file.Status === 'Finished' &&
-              file.PaymentReceiptContent !== null && (
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleDownloadPaymentReceipt}
-                  sx={{ mt: 2, ml: 2 }}
-                >
-                  {t.downloadPaymentReceipt}
-                </Button>
-              )}
+            <div>
+              {file.Status === 'Finished' &&
+                file.PaymentReceiptContent !== null && (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleDownloadPaymentReceipt}
+                    sx={{ mt: 2, ml: 2 }}
+                  >
+                    {t.downloadPaymentReceipt}
+                  </Button>
+                )}
+            </div>
             {!file.PaymentConfirmed &&
               file.Status === 'Finished' &&
               file.PaymentReceiptContent !== null && (
@@ -625,7 +633,7 @@ const AdminDocumentDetailsPage = () => {
             <Paper key={discussion.ID} sx={{ p: 2, mb: 2 }}>
               <Typography variant="body1">{discussion.Message}</Typography>
               <Typography variant="body2" color="textSecondary">
-                {discussion.UserRole === 'admin' ? 'Admin' : 'User'}
+                {discussion.UserRole === 'admin' ? 'Admin' : t.client}
               </Typography>
             </Paper>
           ))}
