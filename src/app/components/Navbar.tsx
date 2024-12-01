@@ -71,7 +71,7 @@ const Navbar = () => {
     };
 
     fetchNotifications();
-  }, []);
+  }, [isLoggedIn]);
 
   const handleMarkAsRead = async () => {
     try {
