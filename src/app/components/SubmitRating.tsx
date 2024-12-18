@@ -14,6 +14,7 @@ import {
 import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
 import { submitRatingTranslations } from '../translations/submitRatingTranslations';
+import { config } from '@/config/config';
 
 const SubmitRating = ({ translatorId, documentId }) => {
   const [rating, setRating] = useState(0);
@@ -34,7 +35,7 @@ const SubmitRating = ({ translatorId, documentId }) => {
       }
 
       const response = await axios.post(
-        'https://doc-translation-api.onrender.com/api/ratings',
+        `${config.apiBaseUrl}/api/ratings`,
         {
           translator_id: translatorId,
           document_id: documentId,

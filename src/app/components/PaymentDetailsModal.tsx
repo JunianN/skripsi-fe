@@ -14,6 +14,7 @@ import {
 import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
 import { paymentDetailsModalTranslations } from '../translations/paymentDetailsModalTranslations';
+import { config } from '@/config/config';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -38,7 +39,7 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
     const fetchDocument = async () => {
       try {
         const response = await axios.get(
-          `https://doc-translation-api.onrender.com/api/documents/${documentId}`,
+          `${config.apiBaseUrl}/api/documents/${documentId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -79,7 +80,7 @@ const PaymentDetailsModal = ({ open, handleClose, documentId, totalPrice }) => {
 
     try {
       await axios.post(
-        `https://doc-translation-api.onrender.com/api/documents/${documentId}/upload-receipt`,
+        `${config.apiBaseUrl}/api/documents/${documentId}/upload-receipt`,
         formData,
         {
           headers: {

@@ -28,6 +28,7 @@ import PaymentDetailsModal from '@/app/components/PaymentDetailsModal';
 import SubmitRating from '@/app/components/SubmitRating';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { documentDetailsPageTranslations } from '../../translations/documentDetailsPageTranslations';
+import { config } from '@/config/config';
 
 const pricePerPage = 100000; // price per page
 
@@ -65,7 +66,7 @@ const DocumentDetailsPage = () => {
     const fetchDocument = async () => {
       try {
         const response = await axios.get(
-          `https://doc-translation-api.onrender.com/api/documents/${id}`,
+          `${config.apiBaseUrl}/api/documents/${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -76,7 +77,7 @@ const DocumentDetailsPage = () => {
 
         if (response.data.TranslatorID !== 0) {
           const ratingResponse = await axios.get(
-            `https://doc-translation-api.onrender.com/api/${response.data.TranslatorID}/average-rating`,
+            `${config.apiBaseUrl}/api/${response.data.TranslatorID}/average-rating`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -97,7 +98,7 @@ const DocumentDetailsPage = () => {
     const fetchRating = async () => {
       try {
         const response = await axios.get(
-          `https://doc-translation-api.onrender.com/api/documents/${id}/rating`,
+          `${config.apiBaseUrl}/api/documents/${id}/rating`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -117,7 +118,7 @@ const DocumentDetailsPage = () => {
     const fetchDiscussions = async () => {
       try {
         const response = await axios.get(
-          `https://doc-translation-api.onrender.com/api/documents/${id}/discussions`,
+          `${config.apiBaseUrl}/api/documents/${id}/discussions`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -147,7 +148,7 @@ const DocumentDetailsPage = () => {
 
     try {
       const response = await axios.post(
-        `https://doc-translation-api.onrender.com/api/documents/${id}/discussions`,
+        `${config.apiBaseUrl}/api/documents/${id}/discussions`,
         { message: newMessage },
         {
           headers: {
@@ -169,7 +170,7 @@ const DocumentDetailsPage = () => {
   const handleDownload = async () => {
     try {
       const response = await axios.get(
-        `https://doc-translation-api.onrender.com/api/documents/${id}/download`,
+        `${config.apiBaseUrl}/api/documents/${id}/download`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,

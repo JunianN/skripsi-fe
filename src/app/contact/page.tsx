@@ -13,6 +13,7 @@ import {
 import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
 import { contactPageTranslations } from '../translations/contactPageTranslations';
+import { config } from '@/config/config';
 
 const ContactPage = () => {
   const [name, setName] = useState('');
@@ -28,10 +29,11 @@ const ContactPage = () => {
     event.preventDefault();
 
     try {
-      const response = await axios.post(
-        'https://doc-translation-api.onrender.com/api/mail',
-        { name, email, message }
-      );
+      const response = await axios.post(`${config.apiBaseUrl}/api/mail`, {
+        name,
+        email,
+        message,
+      });
       setSuccess(t.successMessage);
       setError('');
       setName('');

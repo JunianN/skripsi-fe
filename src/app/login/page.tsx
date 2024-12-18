@@ -17,6 +17,7 @@ import { isAuthenticated } from '@/utils/auth';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { loginPageTranslations } from '../translations/loginPageTranslations';
+import { config } from '@/config/config';
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -38,13 +39,10 @@ const LoginPage = () => {
     setError('');
 
     try {
-      const response = await axios.post(
-        'https://doc-translation-api.onrender.com/api/login',
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${config.apiBaseUrl}/api/login`, {
+        email,
+        password,
+      });
       const { token, userRole } = response.data;
 
       login(token);

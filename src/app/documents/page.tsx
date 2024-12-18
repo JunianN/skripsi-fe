@@ -15,6 +15,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '../contexts/LanguageContext';
 import { documentsPageTranslations } from '../translations/documentsPageTranslations';
+import { config } from '@/config/config';
 
 const DocumentListPage = () => {
   const [documents, setDocuments] = useState([]);
@@ -26,14 +27,11 @@ const DocumentListPage = () => {
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
-        const response = await axios.get(
-          'https://doc-translation-api.onrender.com/api/documents',
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          }
-        );
+        const response = await axios.get(`${config.apiBaseUrl}/api/documents`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
         setDocuments(response.data);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {

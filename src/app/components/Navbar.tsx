@@ -27,6 +27,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import styles from './Navbar.module.css';
 import LanguageIcon from '@mui/icons-material/Language';
 import { navbarTranslations } from '../translations/navbarTranslations';
+import { config } from '@/config/config';
 
 const Navbar = () => {
   const router = useRouter();
@@ -48,7 +49,7 @@ const Navbar = () => {
     const fetchNotifications = async () => {
       try {
         const response = await axios.get(
-          'https://doc-translation-api.onrender.com/api/notifications',
+          `${config.apiBaseUrl}/api/notifications`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -76,7 +77,7 @@ const Navbar = () => {
   const handleMarkAsRead = async () => {
     try {
       await axios.post(
-        'https://doc-translation-api.onrender.com/api/notifications/read',
+        `${config.apiBaseUrl}/api/notifications/read`,
         {},
         {
           headers: {

@@ -24,7 +24,7 @@ import axios from 'axios';
 import { isAuthenticated } from '@/utils/auth';
 import { useLanguage } from '../contexts/LanguageContext';
 import { registerPageTranslations } from '../translations/registerPageTranslations';
-
+import { config } from '@/config/config';
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -82,17 +82,13 @@ const RegisterPage = () => {
     }
 
     try {
-      await axios.post(
-        'https://doc-translation-api.onrender.com/api/register',
-        {
-          username,
-          email,
-          password,
-          role,
-          proficient_languages:
-            role === 'translator' ? proficientLanguages : [],
-        }
-      );
+      await axios.post(`${config.apiBaseUrl}/api/register`, {
+        username,
+        email,
+        password,
+        role,
+        proficient_languages: role === 'translator' ? proficientLanguages : [],
+      });
 
       router.push('/login');
     } catch (error) {

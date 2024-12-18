@@ -13,6 +13,7 @@ import {
 import axios from 'axios';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { adminContactSubmissionsPageTranslations } from '../../translations/adminContactSubmissionsPageTranslations';
+import { config } from '@/config/config';
 
 const AdminContactSubmissionsPage = () => {
   const [contacts, setContacts] = useState([]);
@@ -24,7 +25,7 @@ const AdminContactSubmissionsPage = () => {
     const fetchContacts = async () => {
       try {
         const response = await axios.get(
-          'https://doc-translation-api.onrender.com/api/admin/mails',
+          `${config.apiBaseUrl}/api/admin/mails`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,

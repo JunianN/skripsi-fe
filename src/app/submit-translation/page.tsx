@@ -19,6 +19,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '../contexts/LanguageContext';
 import { submitTranslationPageTranslations } from '../translations/submitTranslationPageTranslations';
+import { config } from '@/config/config';
 
 const pricePerPage = 100000; // Price per page
 
@@ -94,7 +95,7 @@ const SubmitTranslationPage = () => {
 
     try {
       const response = await axios.post(
-        'https://doc-translation-api.onrender.com/api/upload',
+        `${config.apiBaseUrl}/api/upload`,
         formData,
         {
           headers: {

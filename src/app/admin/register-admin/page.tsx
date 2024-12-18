@@ -11,6 +11,7 @@ import {
   Alert,
 } from '@mui/material';
 import axios from 'axios';
+import { config } from '@/config/config';
 
 const RegisterAdminPage = () => {
   const router = useRouter();
@@ -32,7 +33,7 @@ const RegisterAdminPage = () => {
 
     try {
       const response = await axios.post(
-        'https://doc-translation-api.onrender.com/api/admin/register',
+        `${config.apiBaseUrl}/api/admin/register`,
         {
           username,
           email,

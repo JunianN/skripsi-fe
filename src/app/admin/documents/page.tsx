@@ -15,6 +15,7 @@ import {
 import axios from 'axios';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { adminDocumentsPageTranslations } from '../../translations/adminDocumentsPageTranslations';
+import { config } from '@/config/config';
 
 const AdminDocumentsPage = () => {
   const [documents, setDocuments] = useState([]);
@@ -27,7 +28,7 @@ const AdminDocumentsPage = () => {
     const fetchDocuments = async () => {
       try {
         const response = await axios.get(
-          'https://doc-translation-api.onrender.com/api/admin/documents',
+          `${config.apiBaseUrl}/api/admin/documents`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,

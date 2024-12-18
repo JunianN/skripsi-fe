@@ -19,6 +19,7 @@ import {
 import axios from 'axios';
 import { useLanguage } from '../../../contexts/LanguageContext';
 import { translatorDocumentDetailsPageTranslations } from '../../../translations/translatorDocumentDetailsPageTranslations';
+import { config } from '@/config/config';
 
 const getStatusIndex = (status: string) => {
   switch (status.toLowerCase()) {
@@ -51,7 +52,7 @@ const TranslatorDocumentDetailsPage = () => {
     const fetchDocument = async () => {
       try {
         const response = await axios.get(
-          `https://doc-translation-api.onrender.com/api/translator/documents/${id}`,
+          `${config.apiBaseUrl}/api/translator/documents/${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -74,7 +75,7 @@ const TranslatorDocumentDetailsPage = () => {
   const handleDownloadDocument = async () => {
     try {
       const response = await axios.get(
-        `https://doc-translation-api.onrender.com/api/translator/documents/${id}/download`,
+        `${config.apiBaseUrl}/api/translator/documents/${id}/download`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -112,7 +113,7 @@ const TranslatorDocumentDetailsPage = () => {
   const handleApproveDocument = async () => {
     try {
       const response = await axios.post(
-        `https://doc-translation-api.onrender.com/api/translator/documents/${id}/approve`,
+        `${config.apiBaseUrl}/api/translator/documents/${id}/approve`,
         {},
         {
           headers: {
@@ -139,7 +140,7 @@ const TranslatorDocumentDetailsPage = () => {
   const handleDeclineDocument = async () => {
     try {
       const response = await axios.post(
-        `https://doc-translation-api.onrender.com/api/translator/documents/${id}/decline`,
+        `${config.apiBaseUrl}/api/translator/documents/${id}/decline`,
         {},
         {
           headers: {
@@ -175,7 +176,7 @@ const TranslatorDocumentDetailsPage = () => {
 
     try {
       const response = await axios.post(
-        `https://doc-translation-api.onrender.com/api/translator/documents/${id}/upload`,
+        `${config.apiBaseUrl}/api/translator/documents/${id}/upload`,
         formData,
         {
           headers: {
@@ -207,7 +208,7 @@ const TranslatorDocumentDetailsPage = () => {
 
     try {
       const response = await axios.post(
-        `https://doc-translation-api.onrender.com/api/documents/${id}/discussions`,
+        `${config.apiBaseUrl}/api/documents/${id}/discussions`,
         { message: newMessage },
         {
           headers: {

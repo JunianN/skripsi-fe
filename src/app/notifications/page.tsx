@@ -12,6 +12,7 @@ import {
   Alert,
 } from '@mui/material';
 import axios from 'axios';
+import { config } from '@/config/config';
 
 const NotificationsPage = () => {
   const [notifications, setNotifications] = useState([]);
@@ -21,7 +22,7 @@ const NotificationsPage = () => {
     const fetchNotifications = async () => {
       try {
         const response = await axios.get(
-          'https://doc-translation-api.onrender.com/api/notifications',
+          `${config.apiBaseUrl}/api/notifications`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -46,7 +47,7 @@ const NotificationsPage = () => {
   const handleMarkAsRead = async () => {
     try {
       await axios.post(
-        'https://doc-translation-api.onrender.com/api/notifications/read',
+        `${config.apiBaseUrl}/api/notifications/read`,
         {},
         {
           headers: {

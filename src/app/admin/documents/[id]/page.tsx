@@ -24,6 +24,7 @@ import { Star, FiberManualRecord } from '@mui/icons-material';
 import axios from 'axios';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { adminDocumentDetailsPageTranslations } from '../../../translations/adminDocumentDetailsPageTranslations';
+import { config } from '@/config/config';
 
 const getStatusIndex = (status: string) => {
   switch (status.toLowerCase()) {
@@ -57,7 +58,7 @@ const AdminDocumentDetailsPage = () => {
     const fetchDocument = async () => {
       try {
         const response = await axios.get(
-          `https://doc-translation-api.onrender.com/api/admin/documents/${id}`,
+          `${config.apiBaseUrl}/api/admin/documents/${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -81,7 +82,7 @@ const AdminDocumentDetailsPage = () => {
     const fetchDiscussions = async () => {
       try {
         const response = await axios.get(
-          `https://doc-translation-api.onrender.com/api/documents/${id}/discussions`,
+          `${config.apiBaseUrl}/api/documents/${id}/discussions`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -101,7 +102,7 @@ const AdminDocumentDetailsPage = () => {
     const fetchTranslators = async (source, target) => {
       try {
         const response = await axios.get(
-          'https://doc-translation-api.onrender.com/api/admin/translators/by-language',
+          `${config.apiBaseUrl}/api/admin/translators/by-language`,
           {
             params: { source, target },
             headers: {
@@ -126,7 +127,7 @@ const AdminDocumentDetailsPage = () => {
   const handleDownload = async () => {
     try {
       const response = await axios.get(
-        `https://doc-translation-api.onrender.com/api/admin/documents/${id}/download`,
+        `${config.apiBaseUrl}/api/admin/documents/${id}/download`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -156,7 +157,7 @@ const AdminDocumentDetailsPage = () => {
   const handleApprove = async () => {
     try {
       const response = await axios.post(
-        `https://doc-translation-api.onrender.com/api/admin/documents/${id}/approve`,
+        `${config.apiBaseUrl}/api/admin/documents/${id}/approve`,
         {},
         {
           headers: {
@@ -178,7 +179,7 @@ const AdminDocumentDetailsPage = () => {
   const handleReject = async () => {
     try {
       const response = await axios.post(
-        `https://doc-translation-api.onrender.com/api/admin/documents/${id}/reject`,
+        `${config.apiBaseUrl}/api/admin/documents/${id}/reject`,
         {},
         {
           headers: {
@@ -205,7 +206,7 @@ const AdminDocumentDetailsPage = () => {
 
     try {
       const response = await axios.post(
-        `https://doc-translation-api.onrender.com/api/admin/documents/${id}/assign`,
+        `${config.apiBaseUrl}/api/admin/documents/${id}/assign`,
         { translator_id: selectedTranslator },
         {
           headers: {
@@ -239,7 +240,7 @@ const AdminDocumentDetailsPage = () => {
 
     try {
       const response = await axios.post(
-        `https://doc-translation-api.onrender.com/api/documents/${id}/discussions`,
+        `${config.apiBaseUrl}/api/documents/${id}/discussions`,
         { message: newMessage },
         {
           headers: {
@@ -261,7 +262,7 @@ const AdminDocumentDetailsPage = () => {
   const handleDownloadTranslated = async () => {
     try {
       const response = await axios.get(
-        `https://doc-translation-api.onrender.com/api/admin/documents/${id}/translated/download`,
+        `${config.apiBaseUrl}/api/admin/documents/${id}/translated/download`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -291,7 +292,7 @@ const AdminDocumentDetailsPage = () => {
   const handleApproveTranslated = async () => {
     try {
       await axios.post(
-        `https://doc-translation-api.onrender.com/api/admin/documents/${id}/translated/approve`,
+        `${config.apiBaseUrl}/api/admin/documents/${id}/translated/approve`,
         {},
         {
           headers: {
@@ -318,7 +319,7 @@ const AdminDocumentDetailsPage = () => {
   const handleRejectTranslated = async () => {
     try {
       await axios.post(
-        `https://doc-translation-api.onrender.com/api/admin/documents/${id}/translated/reject`,
+        `${config.apiBaseUrl}/api/admin/documents/${id}/translated/reject`,
         {},
         {
           headers: {
@@ -341,7 +342,7 @@ const AdminDocumentDetailsPage = () => {
   const handleDownloadPaymentReceipt = async () => {
     try {
       const response = await axios.get(
-        `https://doc-translation-api.onrender.com/api/admin/documents/${id}/payment-receipt`,
+        `${config.apiBaseUrl}/api/admin/documents/${id}/payment-receipt`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -372,7 +373,7 @@ const AdminDocumentDetailsPage = () => {
   const handleApprovePayment = async () => {
     try {
       await axios.post(
-        `https://doc-translation-api.onrender.com/api/admin/documents/${id}/payment-approve`,
+        `${config.apiBaseUrl}/api/admin/documents/${id}/payment-approve`,
         {},
         {
           headers: {
