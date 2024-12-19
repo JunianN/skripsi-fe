@@ -1,6 +1,6 @@
 export const landingPageTranslations = {
   en: {
-    welcome: 'Welcome to Document Translation Service',
+    welcome: 'Welcome to Lekamantra',
     subtitle:
       'Your one-stop solution for managing and translating documents efficiently.',
     getStarted: 'Get Started',
@@ -32,7 +32,7 @@ export const landingPageTranslations = {
     signUpNow: 'Sign Up Now',
   },
   id: {
-    welcome: 'Selamat Datang di Layanan Penerjemahan Dokumen',
+    welcome: 'Selamat Datang di Lekamantra',
     subtitle:
       'Solusi lengkap Anda untuk mengelola dan menerjemahkan dokumen secara efisien.',
     getStarted: 'Mulai',

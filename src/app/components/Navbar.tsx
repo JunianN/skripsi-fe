@@ -149,7 +149,7 @@ const Navbar = () => {
     <AppBar position="static">
       <Toolbar className={styles.navbar}>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          Translation App
+          Lekamantra
         </Typography>
         {isLoggedIn && (
           <div className={styles.navLinks}>
