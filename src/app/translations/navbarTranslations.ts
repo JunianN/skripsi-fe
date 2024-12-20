@@ -15,6 +15,7 @@ export const navbarTranslations = {
     aboutUs: 'About Us',
     contactUs: 'Contact Us',
     dashboard: 'Dashboard',
+    translators: 'Translators',
   },
   id: {
     appTitle: 'Aplikasi Terjemahan',
@@ -32,5 +33,6 @@ export const navbarTranslations = {
     aboutUs: 'Tentang Kami',
     contactUs: 'Hubungi Kami',
     dashboard: 'Dasbor',
+    translators: 'Penerjemah',
   },
 };

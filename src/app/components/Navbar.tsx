@@ -174,12 +174,20 @@ const Navbar = () => {
               {t.about}
             </Button>
             {payload?.userRole === 'admin' ? (
-              <Button
-                color="inherit"
-                onClick={() => handleNavigation('/admin/mails')}
-              >
-                {t.mails}
-              </Button>
+              <>
+                <Button
+                  color="inherit"
+                  onClick={() => handleNavigation('/admin/mails')}
+                >
+                  {t.mails}
+                </Button>
+                <Button
+                  color="inherit"
+                  onClick={() => handleNavigation('/admin/translators')}
+                >
+                  {t.translators}
+                </Button>
+              </>
             ) : (
               <Button
                 color="inherit"
