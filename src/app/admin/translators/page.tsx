@@ -52,6 +52,7 @@ interface NewTranslator {
   password: string;
   confirmPassword: string;
   proficientLanguages: string[];
+  categories: string[];
 }
 
 interface Language {
@@ -71,6 +72,7 @@ const AdminTranslatorsPage = () => {
     password: '',
     confirmPassword: '',
     proficientLanguages: [],
+    categories: [],
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [snackbar, setSnackbar] = useState({
@@ -132,6 +134,7 @@ const AdminTranslatorsPage = () => {
       password: '',
       confirmPassword: '',
       proficientLanguages: [],
+      categories: [],
     });
     setFormErrors({});
   };
@@ -163,6 +166,10 @@ const AdminTranslatorsPage = () => {
       errors.proficientLanguages = t.requiredField;
     }
 
+    if (newTranslator.categories.length === 0) {
+      errors.categories = t.requiredField;
+    }
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -180,6 +187,7 @@ const AdminTranslatorsPage = () => {
           email: newTranslator.email,
           password: newTranslator.password,
           proficient_languages: newTranslator.proficientLanguages,
+          categories: newTranslator.categories,
           role: 'translator',
         },
         {
@@ -427,7 +435,7 @@ const AdminTranslatorsPage = () => {
               helperText={formErrors.confirmPassword}
               sx={{ mb: 2 }}
             />
-            <FormControl fullWidth error={!!formErrors.proficientLanguages}>
+            <FormControl fullWidth error={!!formErrors.proficientLanguages} sx={{ mb: 2 }}>
               <InputLabel>{t.selectLanguages}</InputLabel>
               <Select
                 multiple
@@ -449,6 +457,29 @@ const AdminTranslatorsPage = () => {
               {formErrors.proficientLanguages && (
                 <Typography color="error" variant="caption" sx={{ mt: 1, ml: 2 }}>
                   {formErrors.proficientLanguages}
+                </Typography>
+              )}
+            </FormControl>
+            <FormControl fullWidth error={!!formErrors.categories}>
+              <InputLabel>{t.selectCategories}</InputLabel>
+              <Select
+                multiple
+                value={newTranslator.categories}
+                onChange={(e) =>
+                  setNewTranslator({
+                    ...newTranslator,
+                    categories: e.target.value as string[],
+                  })
+                }
+                input={<OutlinedInput label={t.selectCategories} />}
+              >
+                <MenuItem value="general">{t.categoryGeneral}</MenuItem>
+                <MenuItem value="engineering">{t.categoryEngineering}</MenuItem>
+                <MenuItem value="social sciences">{t.categorySocialSciences}</MenuItem>
+              </Select>
+              {formErrors.categories && (
+                <Typography color="error" variant="caption" sx={{ mt: 1, ml: 2 }}>
+                  {formErrors.categories}
                 </Typography>
               )}
             </FormControl>

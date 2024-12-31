@@ -18,6 +18,7 @@ export const adminTranslatorsPageTranslations = {
     password: 'Password',
     confirmPassword: 'Confirm Password',
     selectLanguages: 'Select Languages',
+    selectCategories: 'Select Categories',
     cancel: 'Cancel',
     save: 'Add',
     translatorAdded: 'Translator added successfully',
@@ -39,6 +40,10 @@ export const adminTranslatorsPageTranslations = {
     hindi: 'Hindi',
     portuguese: 'Portuguese',
     italian: 'Italian',
+    // Category names
+    categoryGeneral: 'General',
+    categoryEngineering: 'Engineering',
+    categorySocialSciences: 'Social Sciences',
   },
   id: {
     pageTitle: 'Kelola Penerjemah',
@@ -59,6 +64,7 @@ export const adminTranslatorsPageTranslations = {
     password: 'Kata Sandi',
     confirmPassword: 'Konfirmasi Kata Sandi',
     selectLanguages: 'Pilih Bahasa',
+    selectCategories: 'Pilih Kategori',
     cancel: 'Batal',
     save: 'Tambah',
     translatorAdded: 'Penerjemah berhasil ditambahkan',
@@ -80,5 +86,9 @@ export const adminTranslatorsPageTranslations = {
     hindi: 'Bahasa Hindi',
     portuguese: 'Bahasa Portugis',
     italian: 'Bahasa Italia',
+    // Category names
+    categoryGeneral: 'Umum',
+    categoryEngineering: 'Teknik',
+    categorySocialSciences: 'Ilmu Sosial',
   },
 }; 
