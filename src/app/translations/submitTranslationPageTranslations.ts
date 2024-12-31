@@ -26,6 +26,10 @@ export const submitTranslationPageTranslations = {
     hindi: 'Hindi',
     portuguese: 'Portuguese',
     italian: 'Italian',
+    category: 'Document Category',
+    categoryGeneral: 'General',
+    categoryEngineering: 'Engineering',
+    categorySocialSciences: 'Social Sciences',
   },
   id: {
     pageTitle: 'Ajukan Permintaan Terjemahan',
@@ -54,5 +58,9 @@ export const submitTranslationPageTranslations = {
     hindi: 'Hindi',
     portuguese: 'Portugis',
     italian: 'Italia',
+    category: 'Kategori Dokumen',
+    categoryGeneral: 'Umum',
+    categoryEngineering: 'Teknik',
+    categorySocialSciences: 'Ilmu Sosial',
   },
 };

@@ -44,6 +44,7 @@ const SubmitTranslationPage = () => {
   const [sourceLanguage, setSourceLanguage] = useState('');
   const [targetLanguage, setTargetLanguage] = useState('');
   const [numberOfPages, setNumberOfPages] = useState(0);
+  const [category, setCategory] = useState('');
   const [error, setError] = useState('');
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -79,7 +80,8 @@ const SubmitTranslationPage = () => {
       !file ||
       !sourceLanguage ||
       !targetLanguage ||
-      !numberOfPages
+      !numberOfPages ||
+      !category
     ) {
       setError(t.fillAllFields);
       return;
@@ -92,6 +94,7 @@ const SubmitTranslationPage = () => {
     formData.append('sourceLanguage', sourceLanguage);
     formData.append('targetLanguage', targetLanguage);
     formData.append('numberOfPages', numberOfPages.toString());
+    formData.append('category', category);
 
     try {
       const response = await axios.post(
@@ -163,6 +166,20 @@ const SubmitTranslationPage = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            select
+            label={t.category}
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <MenuItem value="general">{t.categoryGeneral}</MenuItem>
+            <MenuItem value="engineering">{t.categoryEngineering}</MenuItem>
+            <MenuItem value="social sciences">{t.categorySocialSciences}</MenuItem>
+          </TextField>
           <TextField
             variant="outlined"
             margin="normal"
