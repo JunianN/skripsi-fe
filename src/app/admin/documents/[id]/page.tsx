@@ -68,7 +68,8 @@ const AdminDocumentDetailsPage = () => {
         setFile(response.data);
         fetchTranslators(
           response.data.SourceLanguage,
-          response.data.TargetLanguage
+          response.data.TargetLanguage,
+          response.data.Category
         );
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
@@ -99,12 +100,12 @@ const AdminDocumentDetailsPage = () => {
       }
     };
 
-    const fetchTranslators = async (source, target) => {
+    const fetchTranslators = async (source, target, category) => {
       try {
         const response = await axios.get(
           `${config.apiBaseUrl}/api/admin/translators/by-language`,
           {
-            params: { source, target },
+            params: { source, target, category },
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
