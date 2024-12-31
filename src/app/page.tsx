@@ -52,7 +52,7 @@ const LandingPage = () => {
           {t.features}
         </Typography>
         <Grid container spacing={4}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={12}>
             <Card>
               <CardContent>
                 <Typography variant="h5" gutterBottom>
@@ -64,7 +64,7 @@ const LandingPage = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={12}>
             <Card>
               <CardContent>
                 <Typography variant="h5" gutterBottom>
@@ -76,7 +76,7 @@ const LandingPage = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={12}>
             <Card>
               <CardContent>
                 <Typography variant="h5" gutterBottom>
@@ -99,7 +99,7 @@ const LandingPage = () => {
           {t.howItWorks}
         </Typography>
         <Grid container spacing={4}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={12}>
             <Card>
               <CardContent>
                 <Typography variant="h5" gutterBottom>
@@ -111,7 +111,7 @@ const LandingPage = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={12}>
             <Card>
               <CardContent>
                 <Typography variant="h5" gutterBottom>
@@ -123,7 +123,7 @@ const LandingPage = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={12}>
             <Card>
               <CardContent>
                 <Typography variant="h5" gutterBottom>
@@ -144,7 +144,7 @@ const LandingPage = () => {
           {t.testimonials}
         </Typography>
         <Grid container spacing={4}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={12}>
             <Card>
               <CardContent>
                 <Avatar sx={{ bgcolor: 'primary.main', mb: 2 }}>A</Avatar>
@@ -158,7 +158,7 @@ const LandingPage = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={12}>
             <Card>
               <CardContent>
                 <Avatar sx={{ bgcolor: 'primary.main', mb: 2 }}>B</Avatar>
@@ -172,7 +172,7 @@ const LandingPage = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={12}>
             <Card>
               <CardContent>
                 <Avatar sx={{ bgcolor: 'primary.main', mb: 2 }}>C</Avatar>
