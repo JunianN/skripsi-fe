@@ -170,9 +170,9 @@ const Navbar = () => {
             >
               {t.documents}
             </Button>
-            <Button color="inherit" onClick={() => handleNavigation('/about')}>
+            {/* <Button color="inherit" onClick={() => handleNavigation('/about')}>
               {t.about}
-            </Button>
+            </Button> */}
             {payload?.userRole === 'admin' ? (
               <>
                 <Button
@@ -305,9 +305,9 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <Button color="inherit" onClick={() => handleNavigation('/about')}>
+            {/* <Button color="inherit" onClick={() => handleNavigation('/about')}>
               {t.aboutUs}
-            </Button>
+            </Button> */}
             <Button
               sx={{ mx: 1 }}
               color="inherit"
@@ -369,9 +369,9 @@ const Navbar = () => {
           onClose={handleClose}
         >
           <MenuItem onClick={() => handleNavigation('/')}>{t.home}</MenuItem>
-          <MenuItem onClick={() => handleNavigation('/about')}>
+          {/* <MenuItem onClick={() => handleNavigation('/about')}>
             {t.about}
-          </MenuItem>
+          </MenuItem> */}
           <MenuItem onClick={() => handleNavigation('/contact')}>
             {t.contact}
           </MenuItem>
