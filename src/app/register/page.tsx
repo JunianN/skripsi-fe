@@ -4,20 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Box,
-  MenuItem,
   Alert,
   Button,
   Container,
   TextField,
   Typography,
   Link as MuiLink,
-  InputLabel,
-  Select,
-  SelectChangeEvent,
-  OutlinedInput,
-  Checkbox,
-  ListItemText,
-  FormControl,
 } from '@mui/material';
 import Link from 'next/link';
 import axios from 'axios';
@@ -25,46 +17,16 @@ import { isAuthenticated } from '@/utils/auth';
 import { useLanguage } from '../contexts/LanguageContext';
 import { registerPageTranslations } from '../translations/registerPageTranslations';
 import { config } from '@/config/config';
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-
-interface Language {
-  code: string;
-  name: string;
-}
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [username, setUsername] = useState('');
-  const [role, setRole] = useState('user');
-  const [proficientLanguages, setProficientLanguages] = useState<string[]>([]);
   const [error, setError] = useState('');
   const router = useRouter();
   const { language } = useLanguage();
   const t = registerPageTranslations[language];
-
-  const languages: Language[] = [
-    { code: 'id', name: t.indonesian },
-    { code: 'en', name: t.english },
-    { code: 'fr', name: t.french },
-    { code: 'es', name: t.spanish },
-    { code: 'ru', name: t.russian },
-    { code: 'ar', name: t.arabic },
-    { code: 'zh', name: t.chinese },
-    { code: 'hi', name: t.hindi },
-    { code: 'pt', name: t.portuguese },
-    { code: 'it', name: t.italian },
-  ];
 
   useEffect(() => {
     if (isAuthenticated()) {
@@ -86,8 +48,7 @@ const RegisterPage = () => {
         username,
         email,
         password,
-        role,
-        proficient_languages: role === 'translator' ? proficientLanguages : [],
+        role: 'user',
       });
 
       router.push('/login');
@@ -98,17 +59,6 @@ const RegisterPage = () => {
         setError(t.unexpectedError);
       }
     }
-  };
-
-  const handleLanguageChange = (
-    event: SelectChangeEvent<typeof proficientLanguages>
-  ) => {
-    const {
-      target: { value },
-    } = event;
-    setProficientLanguages(
-      typeof value === 'string' ? value.split(',') : value
-    );
   };
 
   return (
@@ -180,44 +130,6 @@ const RegisterPage = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
-          <TextField
-            select
-            label={t.role}
-            fullWidth
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            margin="normal"
-          >
-            <MenuItem value="user">{t.user}</MenuItem>
-            <MenuItem value="translator">{t.translator}</MenuItem>
-          </TextField>
-          {role === 'translator' && (
-            <FormControl sx={{ mt: 1, width: 400 }}>
-              <InputLabel id="proficient-languages-label">
-                {t.proficientLanguages}
-              </InputLabel>
-              <Select
-                labelId="proficient-languages-label"
-                id="proficient-languages-checkbox"
-                multiple
-                value={proficientLanguages}
-                onChange={handleLanguageChange}
-                input={<OutlinedInput label={t.proficientLanguages} />}
-                renderValue={(selected) => selected?.join(',')}
-                MenuProps={MenuProps}
-                fullWidth
-              >
-                {languages?.map((language) => (
-                  <MenuItem key={language.code} value={language.code}>
-                    <Checkbox
-                      checked={proficientLanguages.indexOf(language.name) > -1}
-                    />
-                    <ListItemText primary={language.name} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
           {error && <Alert severity="error">{error}</Alert>}
           <Button
             type="submit"
