@@ -334,14 +334,14 @@ const AdminTranslatorsPage = () => {
             <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
               {t.joinedDate}: {formatDate(translator.CreatedAt)}
             </Typography>
-            <Button
+            {/* <Button
               variant="contained"
               color="primary"
               onClick={() => router.push(`translators/${translator.ID}`)}
               sx={{ mt: 2 }}
             >
               {t.viewProfile}
-            </Button>
+            </Button> */}
           </CardContent>
         </Card>
       </Grid>
